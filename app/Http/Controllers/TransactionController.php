@@ -4,15 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\GenerateCode;
 use App\Models\JenisTransaksi;
+use App\Models\Jurnal;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
+    public function __construct() {
+        $this->jurnal = new Jurnal();
+    }
     public function index()
     {
-        $transactions = Transaction::all();
+        // $transactions = Transaction::all();
+        $transactions = DB::select("SELECT
+            a.*,
+            b.keterangan as ket_detail_jenis_transaksi,
+            c.keterangan as ket_jenis_transaksi
+        from transaksi a
+        join detail_jenis_transaksi b on b.id = a.detail_jenis_transaksi 
+            and b.id_jenis_transaksi = a.jenis_transaksi
+        join jenis_transaksi c on c.id = b.id_jenis_transaksi");
 
         $getCode = new GenerateCode();
 
@@ -40,19 +52,39 @@ class TransactionController extends Controller
         $request->validate([
             'transaksi_id' => 'required',
             'tgl_transaksi' => 'required',
+            'jenis_transaksi' => 'required',
+            'detail_jenis_transaksi' => 'required',
             'nominal' => 'required',
-            // 'account_id' => 'required|integer'
         ]);
 
-        Transaction::create([
-            // kiri : nama kolom -> kanan : attribute dari form/view 
-            'transaksi_id' => $request->transaksi_id,
-            'tgl_transaksi' => $request->tgl_transaksi,
-            'total' => $request->nominal,
-        ]);
+        try {
+            $transaksi_id = $request->transaksi_id;
+            $tgl_transaksi = $request->tgl_transaksi;
+            $nominal = $request->nominal;
+            $jenis_transaksi = $request->jenis_transaksi;
+            $detail_jenis_transaksi = $request->detail_jenis_transaksi;
 
-        // return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil ditambahkan.');
+            Transaction::create([
+                'transaksi_id' => $transaksi_id,
+                'tgl_transaksi' => date('Y-m-d', strtotime($tgl_transaksi)),
+                'total' => $nominal,
+                'status' => 1,
+                'jenis_transaksi' => $jenis_transaksi,
+                'detail_jenis_transaksi' => $detail_jenis_transaksi,
+            ]);
 
-        return redirect()->to('transaksi');
+            $datenow = date('Y-m-d');
+
+            /**
+             * ini adalah untuk proses jurnal
+             * sesuaikan untuk jurnal nya
+             */
+
+            // $this->jurnal->doJurnal($transaksi_id, $datenow, '111', $posisi, $nominal);
+    
+            return redirect()->back()->with('success', 'Data berhasil disimpan!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menyimpan data! ' . $e->getMessage());
+        }
     }
 }

@@ -13,14 +13,15 @@
                         <i class="fas fa-plus"></i>
                         Tambah Data
                     </button>
-                    <table class="table table-bordered table-striped table-hover table-sm">
+                    <table class="table table-bordered table-striped table-hover table-sm" id="table" style="width: 100% !important;">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Transaksi ID</th>
                                 <th>Tgl. Transaksi</th>
+                                <th>Jenis Transaksi</th>
+                                <th>Detail Transaksi</th>
                                 <th>Nominal</th>
-                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,8 +33,9 @@
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->transaksi_id }}</td>
                                 <td>{{ $item->tgl_transaksi }}</td>
+                                <td>{{ $item->ket_jenis_transaksi }}</td>
+                                <td>{{ $item->ket_detail_jenis_transaksi }}</td>
                                 <td class="text-right">{{ number_format($item->total) }}</td>
-                                <td>{{ $item->status }}</td>
                             @endforeach
                             </tr>
                         </tbody>
@@ -49,6 +51,8 @@
 @section('script')
     <script>
         $(document).ready(function() {
+            $("#table").DataTable();
+            
             $("#btn_tambah").on("click", function() {
                 $("#modal_tambah").modal("show")
             })
@@ -75,7 +79,7 @@
                             option += `<option value="${response[i].id}">${response[i].keterangan}</option>`;
                         }
 
-                        $("#detail_transaksi").html(option);
+                        $("#detail_jenis_transaksi").html(option);
                     }
                 })
             }

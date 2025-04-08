@@ -36,8 +36,8 @@
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="tgl_transaksi" class="form-label">Detail Transaksi</label>
-                                <select name="detail_transaksi" id="detail_transaksi" class="form-control"></select>
+                                <label for="detail_jenis_transaksi" class="form-label">Detail Transaksi</label>
+                                <select name="detail_jenis_transaksi" id="detail_jenis_transaksi" class="form-control"></select>
                             </div>
                         </div>
                     </div>
