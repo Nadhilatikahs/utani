@@ -35,6 +35,7 @@
                 <a class="collapse-item active" href="{{ route('kategori.index') }}">Kategori</a>
                 <a class="collapse-item active" href="{{ url('coa') }}">COA</a>
                 <a class="collapse-item active" href="{{ url('jenis-transaksi') }}">Jenis Transaksi</a>
+                <a class="collapse-item active" href="{{ url('detail-jenis-transaksi') }}">Detail Jenis Transaksi</a>
             </div>
         </div>
     </li>

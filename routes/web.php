@@ -36,6 +36,7 @@ use App\Http\Controllers\TransactionController;
 
 use App\Http\Controllers\CashTransactionController;
 use App\Http\Controllers\COAController;
+use App\Http\Controllers\DetailTransaksiController;
 use App\Http\Controllers\JenisTransaksiController;
 use App\Http\Controllers\ReportController;
 
@@ -280,6 +281,13 @@ Route::middleware('auth')->group(function () {
         Route::post('simpan', [COAController::class, 'store']);
         Route::put('update/{id}', [COAController::class, 'update']);
         Route::delete('delete/{id}', [COAController::class, 'destroy']);
+    });
+
+    Route::prefix('detail-jenis-transaksi')->group(function () {
+        Route::get('/', [DetailTransaksiController::class, 'index']);
+        Route::post('simpan', [DetailTransaksiController::class, 'store']);
+        Route::put('update/{id}', [DetailTransaksiController::class, 'update']);
+        Route::delete('delete/{id}', [DetailTransaksiController::class, 'destroy']);
     });
 
     Route::prefix('jenis-transaksi')->group(function () {
