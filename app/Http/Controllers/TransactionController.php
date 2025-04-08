@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GenerateCode;
+use App\Models\JenisTransaksi;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,8 +12,26 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::all();   
-        return view('transactions.index', compact('transactions'));
+        $transactions = Transaction::all();
+
+        $getCode = new GenerateCode();
+
+        $kode = $getCode->generateTrxID();
+
+        $jenis_transaksi = JenisTransaksi::all();
+
+        return view('transactions.index', compact('transactions', 'kode', 'jenis_transaksi'));
+    }
+
+    public function getDetailTransaksi(Request $request) 
+    {
+        $id_jenis_transaksi = $request->id_jenis_transaksi;
+
+        $data = DB::table('detail_jenis_transaksi')
+            ->where('id_jenis_transaksi', $id_jenis_transaksi)
+            ->get();
+
+        return response()->json($data);
     }
 
     public function store(Request $request)

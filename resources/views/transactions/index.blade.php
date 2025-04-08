@@ -52,6 +52,33 @@
             $("#btn_tambah").on("click", function() {
                 $("#modal_tambah").modal("show")
             })
+
+            $("#jenis_transaksi").on("change", function() {
+                let value = $(this).val();
+                getDropdown(value);
+            })
+
+            function getDropdown(id) {
+                $.ajax({
+                    url: '{{ url('transaksi/list-detail-transaksi') }}',
+                    method: 'post',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf_token"]').attr('content')
+                    },
+                    data: {
+                        id_jenis_transaksi: id,
+                    },
+                    success: function(response) {
+                        let option = '';
+
+                        for (let i = 0; i < response.length; i++) {
+                            option += `<option value="${response[i].id}">${response[i].keterangan}</option>`;
+                        }
+
+                        $("#detail_transaksi").html(option);
+                    }
+                })
+            }
         })
     </script>
 @endsection

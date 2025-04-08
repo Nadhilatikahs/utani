@@ -299,6 +299,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('transaksi')->group(function () {
         Route::get('/', [TransactionController::class, 'index']);
+        Route::post('list-detail-transaksi', [TransactionController::class, 'getDetailTransaksi']);
         Route::get('form', [TransactionController::class, 'formArusKas']);
         Route::post('simpan', [TransactionController::class, 'store']);
     });

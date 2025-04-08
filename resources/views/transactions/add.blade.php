@@ -12,13 +12,32 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label for="transaksi_id" class="form-label">Transaksi ID</label>
-                                <input type="text" class="form-control" id="transaksi_id" name="transaksi_id">
+                                <input type="text" class="form-control" id="transaksi_id" name="transaksi_id" value="{{ $kode }}" readonly>
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
                                 <label for="tgl_transaksi" class="form-label">Tgl. Transaksi</label>
-                                <input type="date" class="form-control" id="tgl_transaksi" name="tgl_transaksi">
+                                <input type="date" class="form-control" id="tgl_transaksi" name="tgl_transaksi" value="{{ date('Y-m-d') }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="jenis_transaksi" class="form-label">Jenis Transaksi</label>
+                                <select name="jenis_transaksi" id="jenis_transaksi" class="form-control">
+                                    <option value="">Pilih</option>
+                                    @foreach ($jenis_transaksi as $item)
+                                    <option value="{{ $item->id }}">{{ $item->keterangan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="tgl_transaksi" class="form-label">Detail Transaksi</label>
+                                <select name="detail_transaksi" id="detail_transaksi" class="form-control"></select>
                             </div>
                         </div>
                     </div>
@@ -29,7 +48,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
