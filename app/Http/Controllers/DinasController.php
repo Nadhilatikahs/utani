@@ -35,14 +35,16 @@ class DinasController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        $dinas = Dinas::all();
-        $kabupatens = Kabupaten::all();
-        return view('dinas.create',[
-            'kode_dinas' => Dinas::getKodedinas(),
-            'kabupatens' => Kabupaten::all()
-        ] );
-    }
+{
+    $dinas = Dinas::all(); // Ambil semua data dinas (termasuk lat/long)
+    $kabupatens = Kabupaten::all();
+
+    return view('dinas.create', [
+        'kode_dinas' => Dinas::getKodedinas(),
+        'kabupatens' => $kabupatens,
+        'lokasis' => $dinas // Kirim ke view untuk plotting marker
+    ]);
+}
 
     /**
      * Store a newly created resource in storage.
