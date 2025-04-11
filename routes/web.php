@@ -316,3 +316,7 @@ Route::resource('cashtransactions', CashTransactionController::class);
 Route::get('/reports', [ReportController::class, 'index']);
 //Route::resource('journal', JournalController::class);
 Route::resource('report', ReportController::class);
+
+Route::get('/tora', function () {
+    return 'ini halaman tora';
+});

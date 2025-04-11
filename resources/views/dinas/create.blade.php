@@ -90,6 +90,7 @@
 @endsection
 
 @section('script')
+@section('script')
 <script>
     // Initialize the map
     var map = L.map('map').setView([-6.1751, 106.8650], 13); // Coordinates for Jakarta
@@ -147,5 +148,18 @@
         // Update marker and inputs
         updateMarker(e.latlng);
     });
+
+    // Tambahan: Plot semua lokasi Dinas yang sudah ada
+    const lokasiData = @json($lokasis);
+
+    lokasiData.forEach(function(lokasi) {
+        if (lokasi.latitude && lokasi.longitude) {
+            const existingMarker = L.marker([lokasi.latitude, lokasi.longitude])
+                .addTo(map)
+                .bindPopup(`<strong>${lokasi.nama_dinas}</strong><br>Lat: ${lokasi.latitude}<br>Lng: ${lokasi.longitude}`);
+        }
+    });
 </script>
+
+
 @endsection

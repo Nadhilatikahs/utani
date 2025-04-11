@@ -32,10 +32,10 @@ class ProvinsiController extends Controller
      */
     public function create()
     {
-        return view('provinsis.create',
-        [
-            'kode_provinsi' => Provinsi::getKodeprovinsi()
-        ] );
+    return view('provinsis.create', [
+        'kode_provinsi' => Provinsi::getKodeprovinsi(),
+        'provinsis' => Provinsi::all(), // Ini tambahan untuk plotting label di peta
+    ]);
     }
 
     /**
