@@ -76,11 +76,7 @@ class Tanam extends Model
     $tanams = DB::select($sql);
 
     return $tanams;
-    }
-
-    
-    
-
+    }   
         public static function getTanamDetaillahan()
         {
            // query kode beban tanam
