@@ -117,6 +117,19 @@
             <span>Grafik Kelompok Tani</span>
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('clustering/kelompok-tani') }}">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Cluster Kelompok Tani</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('clustering') }}">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Cluster Wilayah</span>
+        </a>
+    </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

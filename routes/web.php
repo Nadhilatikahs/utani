@@ -21,6 +21,9 @@ use App\Http\Controllers\PanenController;
 use App\Http\Controllers\LaporanController;
 // cluster
 use App\Http\Controllers\ClusterController;
+use App\Http\Controllers\Clustering2Controller;
+use App\Http\Controllers\ClusteringWilayahController;
+
 
 //fitur
 use App\Http\Controllers\MapsController;
@@ -320,3 +323,8 @@ Route::resource('report', ReportController::class);
 Route::get('/tora', function () {
     return 'ini halaman tora';
 });
+
+Route::get('/clustering/kelompok-tani', [Clustering2Controller::class, 'index']);
+
+Route::get('/clustering', [ClusteringWilayahController::class, 'index'])
+     ->name('clustering.show');
