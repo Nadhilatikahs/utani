@@ -104,17 +104,19 @@ class ClusteringWilayahController extends Controller
 
     private function queryKomoditas()
     {
-        return DB::table('tanams')
-            ->join('komoditas', 'tanams.id_komoditas', '=', 'komoditas.id_komoditas') // Sesuaikan kolom join
-            ->select(
-                'komoditas.nama_komoditas as nama', // Nama sesuai dengan kategori 'komoditas'
-                DB::raw('SUM(tanams.keuntungan) as total_keuntungan'),
-                DB::raw('SUM(tanams.beban_variabel + tanams.beban_fix) as total_biaya'),
-                DB::raw('AVG(komoditas.latitude) as latitude'),
-                DB::raw('AVG(komoditas.longitude) as longitude')
-            )
-            ->groupBy('komoditas.nama_komoditas')
-            ->get();
+    return DB::table('tanams')
+        ->join('komoditas', 'tanams.id_komoditas', '=', 'komoditas.id_komoditas')
+        ->join('lahans', 'tanams.id_lahan', '=', 'lahans.id_lahan')
+        ->join('anggotatanis', 'lahans.id_anggota', '=', 'anggotatanis.id_anggota')
+        ->select(
+            'komoditas.nama_komoditas as nama', // Nama komoditas
+            DB::raw('SUM(tanams.keuntungan) as total_keuntungan'),
+            DB::raw('SUM(tanams.beban_variabel + tanams.beban_fix) as total_biaya'),
+            DB::raw('AVG(anggotatanis.latitude) as latitude'),
+            DB::raw('AVG(anggotatanis.longitude) as longitude')
+        )
+        ->groupBy('komoditas.nama_komoditas')
+        ->get();
     }
 
     private function doClustering($dataRaw, $kategori)
