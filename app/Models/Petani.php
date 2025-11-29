@@ -4,12 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class anggotatani extends Model
+class Petani extends Model
 {
     protected $table = 'anggotatanis';
     protected $primaryKey = 'id_anggota';
-    public $incrementing = true;
-    protected $keyType = 'int';
 
     protected $fillable = [
         'kode_anggota',
@@ -25,4 +23,14 @@ class anggotatani extends Model
         'longitude',
         'id_keltani',
     ];
+
+    public function kelompokTani()
+    {
+        return $this->belongsTo(KelompokTani::class, 'id_keltani', 'id_keltani');
+    }
+
+    public function lahans()
+    {
+        return $this->hasMany(Lahan::class, 'id_anggota', 'id_anggota');
+    }
 }

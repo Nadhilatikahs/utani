@@ -10,7 +10,7 @@ return new class extends Migration
     {
         // PROVINSI
         Schema::create('provinsis', function (Blueprint $table) {
-            $table->bigIncrements('id_provinsi');
+            $table->id('id_provinsi');
             $table->string('kode_provinsi');
             $table->string('nama_provinsi');
             $table->string('latitude');
@@ -20,110 +20,97 @@ return new class extends Migration
 
         // KABUPATEN
         Schema::create('kabupatens', function (Blueprint $table) {
-            $table->bigIncrements('id_kabupaten');
+            $table->id('id_kabupaten');
             $table->string('kode_kabupaten');
             $table->string('nama_kabupaten');
             $table->string('latitude');
             $table->string('longitude');
-            $table->foreignId('id_provinsi')
-                ->constrained('provinsis')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+
+            $table->unsignedBigInteger('id_provinsi');
             $table->timestamps();
+
+            $table->foreign('id_provinsi')
+                ->references('id_provinsi')
+                ->on('provinsis')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
         });
 
         // DINAS
         Schema::create('dinas', function (Blueprint $table) {
-            $table->bigIncrements('id_dinas');
+            $table->id('id_dinas');
             $table->string('kode_dinas');
             $table->string('nama_dinas');
             $table->string('alamat');
             $table->string('latitude');
             $table->string('longitude');
-            $table->foreignId('id_kabupaten')
-                ->constrained('kabupatens', 'id_kabupaten')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('id_kabupaten');
             $table->timestamps();
+
+            $table->foreign('id_kabupaten')
+                ->references('id_kabupaten')
+                ->on('kabupatens')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
         });
 
         // UPT
         Schema::create('upts', function (Blueprint $table) {
-            $table->bigIncrements('id_upt');
+            $table->id('id_upt');
             $table->string('kode_upt');
             $table->string('nama_upt');
             $table->string('alamat');
             $table->string('latitude');
             $table->string('longitude');
-            $table->foreignId('id_dinas')
-                ->constrained('dinas', 'id_dinas')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('id_dinas');
             $table->timestamps();
+
+            $table->foreign('id_dinas')
+                ->references('id_dinas')
+                ->on('dinas')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
         });
 
         // BPP
         Schema::create('bpps', function (Blueprint $table) {
-            $table->bigIncrements('id_bpp');
+            $table->id('id_bpp');
             $table->string('kode_bpp');
             $table->string('nama_bpp');
             $table->string('alamat');
             $table->string('latitude');
             $table->string('longitude');
-            $table->foreignId('id_upt')
-                ->constrained('upts', 'id_upt')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('id_upt');
             $table->timestamps();
+
+            $table->foreign('id_upt')
+                ->references('id_upt')
+                ->on('upts')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
         });
 
         // DESA
         Schema::create('desas', function (Blueprint $table) {
-            $table->bigIncrements('id_desa');
+            $table->id('id_desa');
             $table->string('kode_desa');
             $table->string('nama_desa');
             $table->string('alamat');
             $table->string('latitude');
             $table->string('longitude');
-            $table->foreignId('id_bpp')
-                ->constrained('bpps', 'id_bpp')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('id_bpp');
             $table->timestamps();
-        });
 
-        // G I S (titik lokasi umum)
-        Schema::create('gis', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
-            $table->timestamps();
-        });
-
-        // VIEW sederhana waktu (dipakai di laporan / filter)
-        Schema::create('v_waktu', function (Blueprint $table) {
-            $table->string('waktu', 7)->primary(); // contoh: '2025-01'
-        });
-
-        Schema::create('v_waktu_parameter', function (Blueprint $table) {
-            $table->string('waktu', 2)->primary(); // contoh: '01', '02', ...
-        });
-
-        // Pemetaan hasil tani (ditambahkan id sebagai PK)
-        Schema::create('pemetaan_hasiltani', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('longitude', 100);
-            $table->string('latitude', 100);
+            $table->foreign('id_bpp')
+                ->references('id_bpp')
+                ->on('bpps')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('pemetaan_hasiltani');
-        Schema::dropIfExists('v_waktu_parameter');
-        Schema::dropIfExists('v_waktu');
-        Schema::dropIfExists('gis');
         Schema::dropIfExists('desas');
         Schema::dropIfExists('bpps');
         Schema::dropIfExists('upts');

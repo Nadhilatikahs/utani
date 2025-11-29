@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\BebanResource\Pages;
-use App\Filament\Resources\BebanResource\RelationManagers;
-use App\Models\Beban;
+use App\Filament\Resources\KategoriResource\Pages;
+use App\Filament\Resources\KategoriResource\RelationManagers;
+use App\Models\Kategori;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,26 +13,21 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BebanResource extends Resource
+class KategoriResource extends Resource
 {
-    protected static ?string $navigationLabel = 'Beban';
-    protected static ?string $navigationIcon  = 'heroicon-o-banknotes';
+    protected static ?string $navigationLabel = 'Kategori';
+    protected static ?string $navigationIcon  = 'heroicon-o-bars-3-bottom-left';
     protected static ?string $navigationGroup = '📚 Data Utama • Usaha Tani';
-    protected static ?int    $navigationSort  = 30;
+    protected static ?int    $navigationSort  = 40;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('kode_beban')
+                Forms\Components\TextInput::make('kode_kategori')
                     ->required(),
-                Forms\Components\TextInput::make('nama_beban')
+                Forms\Components\TextInput::make('keterangan')
                     ->required(),
-                Forms\Components\TextInput::make('kategori')
-                    ->required(),
-                Forms\Components\TextInput::make('id_kategori')
-                    ->required()
-                    ->numeric(),
             ]);
     }
 
@@ -40,15 +35,10 @@ class BebanResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('kode_beban')
+                Tables\Columns\TextColumn::make('kode_kategori')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('nama_beban')
+                Tables\Columns\TextColumn::make('keterangan')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('kategori')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('id_kategori')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -81,9 +71,9 @@ class BebanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBebans::route('/'),
-            'create' => Pages\CreateBeban::route('/create'),
-            'edit' => Pages\EditBeban::route('/{record}/edit'),
+            'index' => Pages\ListKategoris::route('/'),
+            'create' => Pages\CreateKategori::route('/create'),
+            'edit' => Pages\EditKategori::route('/{record}/edit'),
         ];
     }
 }

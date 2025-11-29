@@ -17,13 +17,41 @@ class PetaniResource extends Resource
 {
     protected static ?string $model = Petani::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Anggota Tani';
+    protected static ?string $navigationIcon  = 'heroicon-o-identification';
+    protected static ?string $navigationGroup = '📚 Data Utama • Kelembagaan';
+    protected static ?int    $navigationSort  = 50;
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('kode_anggota')
+                    ->required(),
+                Forms\Components\TextInput::make('nama_anggota')
+                    ->required(),
+                Forms\Components\TextInput::make('nik')
+                    ->required(),
+                Forms\Components\TextInput::make('tempat_lahir')
+                    ->required(),
+                Forms\Components\TextInput::make('alamat')
+                    ->required(),
+                Forms\Components\TextInput::make('jenis_kelamin')
+                    ->required(),
+                Forms\Components\TextInput::make('no_hp')
+                    ->required(),
+                Forms\Components\TextInput::make('status_anggota')
+                    ->required(),
+                Forms\Components\TextInput::make('kategori_petani')
+                    ->required(),
+                Forms\Components\TextInput::make('latitude')
+                    ->required(),
+                Forms\Components\TextInput::make('longitude')
+                    ->required(),
+                Forms\Components\TextInput::make('id_keltani')
+                    ->required()
+                    ->numeric(),
             ]);
     }
 
@@ -31,7 +59,39 @@ class PetaniResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('kode_anggota')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('nama_anggota')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('nik')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tempat_lahir')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('alamat')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('jenis_kelamin')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('no_hp')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status_anggota')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('kategori_petani')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('latitude')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('longitude')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('id_keltani')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

@@ -17,13 +17,28 @@ class KelompokTaniResource extends Resource
 {
     protected static ?string $model = KelompokTani::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Kelompok Tani';
+    protected static ?string $navigationIcon  = 'heroicon-o-user-group';
+    protected static ?string $navigationGroup = '📚 Data Utama • Kelembagaan';
+    protected static ?int    $navigationSort  = 40; // urutan di group
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('kode_keltani')
+                    ->required(),
+                Forms\Components\TextInput::make('nama_keltani')
+                    ->required(),
+                Forms\Components\TextInput::make('alamat')
+                    ->required(),
+                Forms\Components\TextInput::make('latitude')
+                    ->required(),
+                Forms\Components\TextInput::make('longitude')
+                    ->required(),
+                Forms\Components\TextInput::make('id_desa')
+                    ->required()
+                    ->numeric(),
             ]);
     }
 
@@ -31,7 +46,27 @@ class KelompokTaniResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('kode_keltani')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('nama_keltani')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('alamat')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('latitude')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('longitude')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('id_desa')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

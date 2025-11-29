@@ -40,6 +40,17 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+            ->navigationGroups([
+                '📚 Data Utama • Wilayah',
+                '📚 Data Utama • Kelembagaan',
+                '📚 Data Utama • Usaha Tani',
+                '📚 Data Utama • Keuangan',
+                '🌱 Pencatatan Usaha',
+                '💰 Keuangan',
+                '📄 Laporan',
+                '📊 Analisis Data • Grafik',
+                '📊 Analisis Data • Clustering',
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
