@@ -38,10 +38,26 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-                \App\Filament\Widgets\BiayaProduksiPerKomoditas::class,
-                // Widgets\FilamentInfoWidget::class, // boleh dimatikan kalau nggak perlu
+
+                // baris pertama summary
+                \App\Filament\Widgets\DashboardSummaryUtani::class,
+
+                // grafik line keuntungan per bulan (dengan filter tahun)
+                \App\Filament\Widgets\ProfitLossPerMonthChart::class,
+
+                // pie: kontribusi komoditas berdasarkan pendapatan
+                \App\Filament\Widgets\KomoditasSharePieChart::class,
+
+                // bar: hasil panen per komoditas
+                \App\Filament\Widgets\PanenPerKomoditasChart::class,
+
+                // horizontal bar: keuntungan & kerugian per komoditas
+                \App\Filament\Widgets\ProfitLossPerCommodityChart::class,
+
+                // Widgets\FilamentInfoWidget::class, // opsional
             ])
+
+
             ->navigationGroups([
                 '📚 Data Utama • Wilayah',
                 '📚 Data Utama • Kelembagaan',
