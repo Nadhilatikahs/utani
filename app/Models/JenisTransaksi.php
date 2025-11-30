@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JenisTransaksi extends Model
 {
-    protected $table = 'jenis_transaksi';
+    protected $table = 'jenis_transaksi'; // dari SQL dump
     protected $primaryKey = 'id';
     public $timestamps = false;
 
@@ -14,13 +15,8 @@ class JenisTransaksi extends Model
         'keterangan',
     ];
 
-    public function detail()
+    public function detailJenisTransaksis(): HasMany
     {
         return $this->hasMany(DetailJenisTransaksi::class, 'id_jenis_transaksi', 'id');
-    }
-
-    public function accounts()
-    {
-        return $this->hasMany(ChartOfAccount::class, 'id_jenis_transaksi', 'id');
     }
 }

@@ -8,16 +8,16 @@ use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions;
 
-class LaporanBiayaProduksi extends Page implements Forms\Contracts\HasForms
+class LaporanMarginKontribusi extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
-    protected static ?string $navigationIcon  = 'heroicon-o-document-text';
-    protected static ?string $navigationLabel = 'Laporan Biaya Produksi';
+    protected static ?string $navigationIcon  = 'heroicon-o-scale';
+    protected static ?string $navigationLabel = 'Laporan Margin Kontribusi';
     protected static ?string $navigationGroup = '📄 Laporan';
-    protected static ?int    $navigationSort  = 10;
+    protected static ?int    $navigationSort  = 20;
 
-    protected static string $view = 'filament.pages.laporan-biaya-produksi';
+    protected static string $view = 'filament.pages.laporan-margin-kontribusi';
 
     public ?int $tanam_id = null;
     public ?array $hasil = null;
@@ -52,54 +52,35 @@ class LaporanBiayaProduksi extends Page implements Forms\Contracts\HasForms
 
     public function hitung(?int $tanamId): void
     {
-        if (!$tanamId) {
+        if (! $tanamId) {
             $this->hasil = null;
             return;
         }
 
-        $tanam = Tanam::with([
-                'panens',
-                'bebanTanams.beban',
-                'lahan.petani',
-                'komoditas',
-            ])
+        $tanam = Tanam::with(['panens', 'bebanTanams.beban', 'lahan.petani', 'komoditas'])
             ->findOrFail($tanamId);
 
-        // 🔢 Induk
         $pendapatan = $tanam->total_pendapatan;
-        $biayaVar   = $tanam->total_biaya_variabel;
-        $biayaTetap = $tanam->total_biaya_tetap;
-        $totalBiaya = $tanam->total_biaya;
-        $laba       = $tanam->keuntungan_bersih;
 
-        // 🔢 Volume (dipakai untuk CMPU)
+        // anggap semua BebanTanam = biaya variabel (untuk laporan MC)
+        $biayaVariabelTotal = (float) $tanam->bebanTanams->sum('total');
+        $biayaTetapTotal    = (float) ($tanam->beban_fix ?? 0);
+
+        $marginKontribusiTotal = $pendapatan - $biayaVariabelTotal;
+
         $volume = $tanam->panens->sum('jumlah') ?: $tanam->volume_panen;
-        $cmpu   = $volume > 0 ? $totalBiaya / $volume : null;
+        $hargaPerUnit = $volume > 0 ? $pendapatan / $volume : null;
 
-        // 🔢 Breakdown BBB/BTKL/BOP dari bebanTanams
-        $detailByKategori = [
-            'BBB'  => ['items' => [], 'subtotal' => 0],
-            'BTKL' => ['items' => [], 'subtotal' => 0],
-            'BOP'  => ['items' => [], 'subtotal' => 0],
-            'LAIN' => ['items' => [], 'subtotal' => 0],
-        ];
+        $mcPerUnit = $volume > 0 ? $marginKontribusiTotal / $volume : null;
 
-        foreach ($tanam->bebanTanams as $bt) {
-            $kategori = strtoupper($bt->beban->kategori ?? 'LAIN');
-            if (! in_array($kategori, ['BBB', 'BTKL', 'BOP'], true)) {
-                $kategori = 'LAIN';
-            }
+        $bepUnit   = $mcPerUnit && $mcPerUnit > 0 ? $biayaTetapTotal / $mcPerUnit : null;
+        $bepRupiah = $bepUnit && $hargaPerUnit ? $bepUnit * $hargaPerUnit : null;
 
-            $detailByKategori[$kategori]['items'][] = [
-                'kode_beban' => $bt->beban->kode_beban,
-                'nama_beban' => $bt->beban->nama_beban,
-                'satuan'     => $bt->satuan,
-                'jumlah'     => $bt->jumlah,
-                'harga'      => $bt->harga,
-                'total'      => $bt->total,
-            ];
-
-            $detailByKategori[$kategori]['subtotal'] += (float) $bt->total;
+        $status = 'IMPAS';
+        if ($pendapatan > $biayaVariabelTotal + $biayaTetapTotal) {
+            $status = 'UNTUNG';
+        } elseif ($pendapatan < $biayaVariabelTotal + $biayaTetapTotal) {
+            $status = 'RUGI';
         }
 
         $this->hasil = [
@@ -108,22 +89,19 @@ class LaporanBiayaProduksi extends Page implements Forms\Contracts\HasForms
                 'komoditas'   => $tanam->komoditas->nama_komoditas,
                 'petani'      => $tanam->lahan->petani->nama_anggota,
                 'volume'      => $volume,
+                'harga_satuan'=> $hargaPerUnit,
             ],
-            'ringkasan' => [
-                'pendapatan'  => $pendapatan,
-                'biaya_var'   => $biayaVar,
-                'biaya_tetap' => $biayaTetap,
-                'total_biaya' => $totalBiaya,
-                'keuntungan'  => $laba,
-                'cmpu'        => $cmpu,
-            ],
-            'detail_biaya' => $detailByKategori,
+            'pendapatan' => $pendapatan,
+            'biaya_variabel' => $biayaVariabelTotal,
+            'biaya_tetap'    => $biayaTetapTotal,
+            'margin_total'   => $marginKontribusiTotal,
+            'margin_per_unit'=> $mcPerUnit,
+            'bep_unit'       => $bepUnit,
+            'bep_rupiah'     => $bepRupiah,
+            'status'         => $status,
         ];
     }
 
-    /**
-     * Tombol header: Download PDF
-     */
     protected function getHeaderActions(): array
     {
         return [
@@ -141,15 +119,14 @@ class LaporanBiayaProduksi extends Page implements Forms\Contracts\HasForms
             return;
         }
 
-        // pastikan data terbaru
         $this->hitung($this->tanam_id);
 
         $pdf = app('dompdf.wrapper')->loadView(
-            'exports.laporan-biaya-produksi-pdf',
+            'exports.laporan-margin-kontribusi-pdf',
             ['hasil' => $this->hasil]
         );
 
-        $filename = 'laporan-biaya-produksi-'.$this->hasil['tanam']['kode_tanam'].'.pdf';
+        $filename = 'laporan-margin-kontribusi-'.$this->hasil['tanam']['kode_tanam'].'.pdf';
 
         return response()->streamDownload(
             fn () => print($pdf->output()),

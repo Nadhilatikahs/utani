@@ -18,6 +18,6 @@ class CashTransaction extends Model
 
     protected $casts = [
         'transaction_date' => 'date',
-        'amount'           => 'float',
+        'amount'           => 'decimal:2',
     ];
 }
