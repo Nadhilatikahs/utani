@@ -12,4 +12,10 @@ class GrafikUsahaTani extends Page
     protected static ?int    $navigationSort  = 10;
 
     protected static string $view = 'filament.pages.grafik-usaha-tani';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // jangan tampil di sidebar
+        return false;
+    }
 }

@@ -12,4 +12,9 @@ class ClusterWilayah extends Page
     protected static ?int    $navigationSort  = 20;
 
     protected static string $view = 'filament.pages.cluster-wilayah';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

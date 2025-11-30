@@ -12,4 +12,8 @@ class ClusterBiayaPertanian extends Page
     protected static ?int    $navigationSort  = 22;
 
     protected static string $view = 'filament.pages.cluster-biaya-pertanian';
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

@@ -12,4 +12,8 @@ class ClusterKelompokTani extends Page
     protected static ?int    $navigationSort  = 21;
 
     protected static string $view = 'filament.pages.cluster-kelompok-tani';
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

@@ -39,6 +39,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\BiayaProduksiPerKomoditas::class,
+                // Widgets\FilamentInfoWidget::class, // boleh dimatikan kalau nggak perlu
             ])
             ->navigationGroups([
                 '📚 Data Utama • Wilayah',

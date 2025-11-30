@@ -12,4 +12,8 @@ class GrafikKelompokTani extends Page
     protected static ?int    $navigationSort  = 12;
 
     protected static string $view = 'filament.pages.grafik-kelompok-tani';
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }
