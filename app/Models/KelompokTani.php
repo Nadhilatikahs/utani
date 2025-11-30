@@ -25,6 +25,6 @@ class KelompokTani extends Model
 
     public function anggotas()
     {
-        return $this->hasMany(AnggotaTani::class, 'id_keltani', 'id_keltani');
+        return $this->hasMany(Petani::class, 'id_keltani', 'id_keltani');
     }
 }
