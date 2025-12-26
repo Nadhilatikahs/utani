@@ -12,15 +12,15 @@ class LaporanMarginKontribusi extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
-    protected static ?string $navigationIcon  = 'heroicon-o-scale';
+    protected static ?string $navigationIcon  = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Laporan Margin Kontribusi';
     protected static ?string $navigationGroup = '📄 Laporan';
     protected static ?int    $navigationSort  = 20;
 
     protected static string $view = 'filament.pages.laporan-margin-kontribusi';
 
-    public ?int $tanam_id = null;
-    public ?array $hasil = null;
+    public ?int   $tanam_id = null;
+    public ?array $hasil    = null;
 
     public function mount(): void
     {
@@ -36,7 +36,7 @@ class LaporanMarginKontribusi extends Page implements Forms\Contracts\HasForms
                     ->options(
                         Tanam::with('lahan.petani', 'komoditas')
                             ->get()
-                            ->mapWithKeys(fn ($t) => [
+                            ->mapWithKeys(fn (Tanam $t) => [
                                 $t->id_tanam => $t->kode_tanam
                                     .' - '.$t->komoditas->nama_komoditas
                                     .' ('.$t->lahan->petani->nama_anggota.')',
@@ -57,51 +57,90 @@ class LaporanMarginKontribusi extends Page implements Forms\Contracts\HasForms
             return;
         }
 
-        $tanam = Tanam::with(['panens', 'bebanTanams.beban', 'lahan.petani', 'komoditas'])
+        $tanam = Tanam::with([
+                'panens',
+                'bebanTanams.beban',
+                'lahan.petani',
+                'komoditas',
+            ])
             ->findOrFail($tanamId);
 
-        $pendapatan = $tanam->total_pendapatan;
+        // ==== DATA DASAR ====
+        $pendapatan  = $tanam->total_pendapatan;       // Σ (jumlah * harga)
+        $biayaVar    = $tanam->total_biaya_variabel;   // Σ beban variabel
+        $biayaTetap  = $tanam->total_biaya_tetap;      // beban_fix
+        $totalBiaya  = $tanam->total_biaya;            // var + tetap
+        $labaBersih  = $tanam->keuntungan_bersih;      // pendapatan - totalBiaya (atau kolom keuntungan)
+        $volume      = $tanam->panens->sum('jumlah') ?: $tanam->volume_panen;
 
-        // anggap semua BebanTanam = biaya variabel (untuk laporan MC)
-        $biayaVariabelTotal = (float) $tanam->bebanTanams->sum('total');
-        $biayaTetapTotal    = (float) ($tanam->beban_fix ?? 0);
+        // ==== PERHITUNGAN PER UNIT ====
+        $hargaPerUnit        = $volume > 0 ? $pendapatan  / $volume : null;
+        $biayaVarPerUnit     = $volume > 0 ? $biayaVar    / $volume : null;
+        $marginKontribusiPU  = $volume > 0 ? ($pendapatan - $biayaVar) / $volume : null;
 
-        $marginKontribusiTotal = $pendapatan - $biayaVariabelTotal;
+        // jika harga jual atau margin per unit nol, beberapa rasio tidak bisa dihitung
+        $rasioMarginKontribusi = ($hargaPerUnit && $marginKontribusiPU)
+            ? $marginKontribusiPU / $hargaPerUnit
+            : null;
 
-        $volume = $tanam->panens->sum('jumlah') ?: $tanam->volume_panen;
-        $hargaPerUnit = $volume > 0 ? $pendapatan / $volume : null;
+        // ==== BREAK EVEN POINT ====
+        $bepUnit  = ($marginKontribusiPU && $marginKontribusiPU > 0)
+            ? $biayaTetap / $marginKontribusiPU
+            : null;
 
-        $mcPerUnit = $volume > 0 ? $marginKontribusiTotal / $volume : null;
+        $bepRupiah = ($rasioMarginKontribusi && $rasioMarginKontribusi > 0)
+            ? $biayaTetap / $rasioMarginKontribusi
+            : null;
 
-        $bepUnit   = $mcPerUnit && $mcPerUnit > 0 ? $biayaTetapTotal / $mcPerUnit : null;
-        $bepRupiah = $bepUnit && $hargaPerUnit ? $bepUnit * $hargaPerUnit : null;
+        // Margin keamanan (safety margin) opsional
+        $penjualanBEP   = $bepRupiah ?? 0;
+        $marginKeamanan = $pendapatan > 0
+            ? $pendapatan - $penjualanBEP
+            : null;
 
-        $status = 'IMPAS';
-        if ($pendapatan > $biayaVariabelTotal + $biayaTetapTotal) {
-            $status = 'UNTUNG';
-        } elseif ($pendapatan < $biayaVariabelTotal + $biayaTetapTotal) {
-            $status = 'RUGI';
-        }
+        $marginKeamananPersen = ($pendapatan > 0 && ! is_null($marginKeamanan))
+            ? $marginKeamanan / $pendapatan
+            : null;
 
+        // ==== SIMPAN KE ARRAY HASIL ====
         $this->hasil = [
             'tanam' => [
                 'kode_tanam'  => $tanam->kode_tanam,
                 'komoditas'   => $tanam->komoditas->nama_komoditas,
                 'petani'      => $tanam->lahan->petani->nama_anggota,
                 'volume'      => $volume,
-                'harga_satuan'=> $hargaPerUnit,
             ],
-            'pendapatan' => $pendapatan,
-            'biaya_variabel' => $biayaVariabelTotal,
-            'biaya_tetap'    => $biayaTetapTotal,
-            'margin_total'   => $marginKontribusiTotal,
-            'margin_per_unit'=> $mcPerUnit,
-            'bep_unit'       => $bepUnit,
-            'bep_rupiah'     => $bepRupiah,
-            'status'         => $status,
+
+            'ringkasan' => [
+                'pendapatan'   => $pendapatan,
+                'biaya_var'    => $biayaVar,
+                'biaya_tetap'  => $biayaTetap,
+                'total_biaya'  => $totalBiaya,
+                'laba_bersih'  => $labaBersih,
+            ],
+
+            'per_unit' => [
+                'harga_jual_per_unit'       => $hargaPerUnit,
+                'biaya_variabel_per_unit'   => $biayaVarPerUnit,
+                'margin_kontribusi_per_unit'=> $marginKontribusiPU,
+                'rasio_margin_kontribusi'   => $rasioMarginKontribusi,
+            ],
+
+            'bep' => [
+                'bep_unit'    => $bepUnit,
+                'bep_rupiah'  => $bepRupiah,
+            ],
+
+            'margin_keamanan' => [
+                'nominal' => $marginKeamanan,
+                'persen'  => $marginKeamananPersen,
+            ],
         ];
     }
 
+    /**
+     * Tombol header: Download PDF
+     */
     protected function getHeaderActions(): array
     {
         return [
