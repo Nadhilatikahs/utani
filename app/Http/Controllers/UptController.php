@@ -37,7 +37,8 @@ class UptController extends Controller
         $dinas = Dinas::all();
         return view('upts.create',[
             'kode_upt' => Upt::getKodeupt(),
-            'dinas' => Dinas::all()
+            'dinas' => $dinas,
+            'upts' => $upts
         ] );
     }
 

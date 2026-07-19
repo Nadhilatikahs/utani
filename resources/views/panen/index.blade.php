@@ -22,6 +22,7 @@
                 <th>Jumlah</th>
                 <th>Harga/satuan</th>
                 <th>Hasil Panen</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -43,6 +44,17 @@
                         <td class="align-middle">{{number_format ($tm->jumlah) }}kg</td>
                         <td class="align-middle">Rp.{{number_format ($tm->harga) }}</td>
                         <td class="align-middle">Rp.{{number_format ($tm->hasil_panen) }}</td>
+                        <td class="align-middle">
+                            @php
+                                $status = $tm->status_panen ?? 'berhasil';
+                                $map = [
+                                    'berhasil'       => 'Berhasil',
+                                    'gagal_sebagian' => 'Gagal Sebagian',
+                                    'gagal_total'    => 'Gagal Total',
+                                ];
+                            @endphp
+                            {{ $map[$status] ?? $status }}
+                        </td>
                        
                        
                        

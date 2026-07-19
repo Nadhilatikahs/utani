@@ -1,0 +1,113 @@
+flowchart TD
+    %% Start
+    Start([START: Database Entities]) --> GeoHierarchy{Geographic<br/>Hierarchy?}
+    
+    %% Geographic Hierarchy Flow
+    GeoHierarchy -->|Yes| Provinsi[PROVINSI<br/>id_provinsi PK<br/>kode_provinsi<br/>nama_provinsi<br/>latitude, longitude]
+    Provinsi -->|has many| Rel1{Relationship}
+    Rel1 -->|1 to Many| Kabupaten[KABUPATEN<br/>id_kabupaten PK<br/>kode_kabupaten<br/>nama_kabupaten<br/>id_provinsi FK]
+    
+    Kabupaten -->|has many| Rel2{Relationship}
+    Rel2 -->|1 to Many| Dinas[DINAS<br/>id_dinas PK<br/>kode_dinas<br/>nama_dinas<br/>id_kabupaten FK]
+    
+    Dinas -->|has many| Rel3{Relationship}
+    Rel3 -->|1 to Many| Upt[UPT<br/>id_upt PK<br/>kode_upt<br/>nama_upt<br/>id_dinas FK]
+    
+    Upt -->|has many| Rel4{Relationship}
+    Rel4 -->|1 to Many| Bpp[BPP<br/>id_bpp PK<br/>kode_bpp<br/>nama_bpp<br/>id_upt FK]
+    
+    Bpp -->|has many| Rel5{Relationship}
+    Rel5 -->|1 to Many| Desa[DESA<br/>id_desa PK<br/>kode_desa<br/>nama_desa<br/>id_bpp FK]
+    
+    Desa -->|has many| Rel6{Relationship}
+    Rel6 -->|1 to Many| KelompokTani[KELOMPOKTANI<br/>id_keltani PK<br/>kode_keltani<br/>nama_keltani<br/>id_desa FK]
+    
+    KelompokTani -->|has many| Rel7{Relationship}
+    Rel7 -->|1 to Many| AnggotaTani[ANGGOTATANI<br/>id_anggota PK<br/>kode_anggota<br/>nama_anggota, NIK<br/>id_keltani FK]
+    
+    %% Land and Farming Flow
+    GeoHierarchy -->|No| LandFarming{Land &<br/>Farming?}
+    AnggotaTani -->|owns| LandFarming
+    
+    LandFarming -->|Yes| Lahan[LAHAN<br/>id_lahan PK<br/>kode_lahan<br/>id_anggota FK<br/>luas, jml_petak]
+    
+    Lahan -->|used for| Rel8{Relationship}
+    Rel8 -->|1 to Many| Tanam[TANAM<br/>id_tanam PK<br/>kode_tanam<br/>id_lahan FK<br/>id_komoditas FK<br/>tgl_tanam, tgl_panen<br/>volume_panen, keuntungan<br/>beban_variabel, beban_fix]
+    
+    Komoditas[KOMODITAS<br/>id_komoditas PK<br/>kode_komoditas<br/>nama_komoditas<br/>kategori, harga_satuan] -->|planted| Rel8
+    
+    Tanam -->|has costs| Rel9{Relationship}
+    Rel9 -->|1 to Many| Bebantanam[BEBANTANAM<br/>id_bebantanam PK<br/>kode_bebantanam<br/>id_tanam FK<br/>id_beban FK<br/>satuan, jumlah<br/>harga, total]
+    
+    Beban[BEBAN<br/>id_beban PK<br/>kode_beban<br/>nama_beban<br/>id_kategori FK<br/>jenis_produksi<br/>satuan_default] -->|used in| Rel9
+    
+    Kategori[KATEGORI<br/>id_kategori PK<br/>kode_kategori<br/>keterangan] -->|categorizes| Rel10{Relationship}
+    Rel10 -->|1 to Many| Beban
+    
+    Tanam -->|produces| Rel11{Relationship}
+    Rel11 -->|1 to Many| Panen[PANEN<br/>id_panen PK<br/>kode_panen<br/>id_tanam FK<br/>tgal_panen<br/>jumlah, harga<br/>hasil_panen]
+    
+    %% Financial Flow
+    LandFarming -->|No| Financial{Financial<br/>System?}
+    
+    User[USER<br/>id PK<br/>name, email<br/>password] -->|creates| Rel12{Relationship}
+    Rel12 -->|1 to Many| CashTransaction[CASH_TRANSACTION<br/>id PK<br/>transaction_type<br/>transaction_date<br/>amount, description]
+    
+    ChartOfAccounts[CHART_OF_ACCOUNTS<br/>id PK<br/>kode_akun<br/>id_jenis_transaksi FK<br/>nama_akun, header<br/>posisi_dr_cr<br/>saldo_awal] -->|uses| Rel12
+    
+    JenisTransaksi[JENIS_TRANSAKSI<br/>id PK<br/>keterangan] -->|classifies| Rel13{Relationship}
+    Rel13 -->|1 to Many| ChartOfAccounts
+    
+    CashTransaction -->|recorded in| Rel14{Relationship}
+    Rel14 -->|1 to Many| Journal[JOURNAL<br/>No PK<br/>akun<br/>debit, kredit]
+    
+    Journal -->|contains| Rel15{Relationship}
+    Rel15 -->|1 to Many| GeneralJournal[GENERAL_JOURNAL<br/>id PK<br/>transaction_date<br/>account_name<br/>debit, credit<br/>description]
+    
+    %% End
+    Panen --> End([END: All Entities])
+    GeneralJournal --> End
+    
+    %% Styling
+    style Start fill:#90EE90,stroke:#333,stroke-width:3px
+    style End fill:#FFB6C1,stroke:#333,stroke-width:3px
+    style Provinsi fill:#87CEEB,stroke:#333,stroke-width:2px
+    style Kabupaten fill:#87CEEB,stroke:#333,stroke-width:2px
+    style Dinas fill:#87CEEB,stroke:#333,stroke-width:2px
+    style Upt fill:#87CEEB,stroke:#333,stroke-width:2px
+    style Bpp fill:#87CEEB,stroke:#333,stroke-width:2px
+    style Desa fill:#87CEEB,stroke:#333,stroke-width:2px
+    style KelompokTani fill:#87CEEB,stroke:#333,stroke-width:2px
+    style AnggotaTani fill:#87CEEB,stroke:#333,stroke-width:2px
+    style Lahan fill:#FFD700,stroke:#333,stroke-width:2px
+    style Komoditas fill:#FFD700,stroke:#333,stroke-width:2px
+    style Tanam fill:#FFD700,stroke:#333,stroke-width:2px
+    style Bebantanam fill:#FFD700,stroke:#333,stroke-width:2px
+    style Beban fill:#FFD700,stroke:#333,stroke-width:2px
+    style Kategori fill:#FFD700,stroke:#333,stroke-width:2px
+    style Panen fill:#FFD700,stroke:#333,stroke-width:2px
+    style User fill:#DDA0DD,stroke:#333,stroke-width:2px
+    style CashTransaction fill:#DDA0DD,stroke:#333,stroke-width:2px
+    style ChartOfAccounts fill:#DDA0DD,stroke:#333,stroke-width:2px
+    style JenisTransaksi fill:#DDA0DD,stroke:#333,stroke-width:2px
+    style Journal fill:#DDA0DD,stroke:#333,stroke-width:2px
+    style GeneralJournal fill:#DDA0DD,stroke:#333,stroke-width:2px
+    style Rel1 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel2 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel3 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel4 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel5 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel6 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel7 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel8 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel9 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel10 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel11 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel12 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel13 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel14 fill:#FFA500,stroke:#333,stroke-width:2px
+    style Rel15 fill:#FFA500,stroke:#333,stroke-width:2px
+    style GeoHierarchy fill:#FFA500,stroke:#333,stroke-width:2px
+    style LandFarming fill:#FFA500,stroke:#333,stroke-width:2px
+    style Financial fill:#FFA500,stroke:#333,stroke-width:2px
+

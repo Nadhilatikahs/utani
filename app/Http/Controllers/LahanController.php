@@ -19,7 +19,7 @@ class LahanController extends Controller
     public function index()
     {
         $lahans = Lahan::getLahanDetailanggota();
-        $anggotatanis = AnggotaTani::orderBy('id_anggota')->get(); 
+        $anggotatanis = AnggotaTani::orderBy('id_anggota')->get();
 
         // Menambahkan informasi apakah data master memiliki data transaksi atau tidak
         foreach ($lahans as $lh) {
@@ -47,17 +47,17 @@ class LahanController extends Controller
     public function store(StoreLahanRequest $request)
     {
         $validated = $request->validate([
-            
+
             'kode_lahan' => 'required',
             'id_anggota' => 'required',
             'luas' => 'required',
             'jml_petak' => 'required',
-            
+
         ]);
 
         // masukkan ke db
         Lahan::create($request->all());
-        
+
         return redirect()->route('lahans.index')->with('success','Data Berhasil di Input');
     }
 
@@ -77,24 +77,24 @@ class LahanController extends Controller
         $anggotatanis = AnggotaTani::all();
         $get = DB::table('lahans')->where('id_lahan', $id_lahan)->get();
         foreach ($get as $p) {
-            
+
             $id_lahan = $p->id_lahan;
             $kode_lahan = $p->kode_lahan;
             $id_anggota = $p->id_anggota;
             $luas = $p->luas;
             $jml_petak = $p->jml_petak;
-            
-           
+
+
         }
         return view('lahans.edit', [
-            
+
             'id_lahan' => $id_lahan,
             'kode_lahan' => $kode_lahan,
             'id_anggota' => $id_anggota,
             'luas' => $luas,
             'jml_petak' => $jml_petak,
             'anggotatanis' => AnggotaTani::all()
-            
+
         ]);
     }
 
@@ -104,28 +104,28 @@ class LahanController extends Controller
     public function update(Request $request, Lahan $lahans)
     {
         $validated = $request->validate([
-            
-            
+
+
             'kode_lahan' => 'required',
             'id_anggota' => 'required',
             'luas' => 'required',
             'jml_petak' => 'required',
-            
-           
-            
+
+
+
         ]);
 
         $update = Lahan::where('id_lahan', $request->id_lahan)
             ->update([
-                
-                
+
+
                 'kode_lahan' => $request->kode_lahan,
                 'id_anggota' => $request->id_anggota,
                 'luas' => $request->luas,
                 'jml_petak' => $request->jml_petak
-                
-               
-              
+
+
+
             ]);
 
         return redirect()->route('lahans.index')->with('success', 'Data Berhasil di Update');

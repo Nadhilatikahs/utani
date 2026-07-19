@@ -1,0 +1,121 @@
+flowchart TD
+    %% Actors
+    BPPOfficer[BPP Officer]
+    Farmer[Farmer]
+    GroupLeader[Farmer Group Leader]
+    
+    %% Start Process
+    Start([Start: System Initialization]) --> SetupGeo[Setup Geographic Data]
+    
+    SetupGeo --> CreateProvinsi[Create Provinsi]
+    CreateProvinsi --> CreateKabupaten[Create Kabupaten]
+    CreateKabupaten --> CreateDinas[Create Dinas]
+    CreateDinas --> CreateUpt[Create UPT]
+    CreateUpt --> CreateBpp[Create BPP]
+    CreateBpp --> CreateDesa[Create Desa]
+    CreateDesa --> CreateKelompokTani[Create Kelompok Tani]
+    CreateKelompokTani --> RegisterAnggota[Register Anggota Tani]
+    
+    RegisterAnggota --> RegisterLahan{Register Lahan?}
+    RegisterLahan -->|Yes| CreateLahan[Create Lahan Record]
+    RegisterLahan -->|No| SetupKomoditas[Setup Komoditas]
+    CreateLahan --> SetupKomoditas
+    
+    SetupKomoditas --> CreateKomoditas[Create Komoditas]
+    CreateKomoditas --> SetupBeban[Setup Beban Categories]
+    
+    SetupBeban --> CreateKategori[Create Kategori<br/>Variable/Fixed Classification]
+    CreateKategori --> CreateBeban[Create Beban Types<br/>BBB/BTKL/BOP Classification]
+    
+    CreateBeban --> StartFarming[Start Farming Process]
+    
+    %% Planting Cycle Process
+    StartFarming --> CreateTanam[Create Tanam Record<br/>Planting Cycle]
+    CreateTanam --> RecordBeban[Record Cost Transaction]
+    
+    RecordBeban --> ClassifyCost{Classify Cost}
+    ClassifyCost -->|Material| RecordBBB[Record BBB<br/>Material Cost]
+    ClassifyCost -->|Labor| RecordBTKL[Record BTKL<br/>Labor Cost]
+    ClassifyCost -->|Overhead| RecordBOP[Record BOP<br/>Overhead Cost]
+    
+    RecordBBB --> ClassifyBehavior{Classify Behavior}
+    RecordBTKL --> ClassifyBehavior
+    RecordBOP --> ClassifyBehavior
+    
+    ClassifyBehavior -->|Variable| RecordVariable[Record Variable Cost<br/>Quantity × Unit Price = Total]
+    ClassifyBehavior -->|Fixed| RecordFixed[Record Fixed Cost<br/>Total Amount]
+    
+    RecordVariable --> ValidateTransaction[BPP Officer: Validate Transaction]
+    RecordFixed --> ValidateTransaction
+    
+    ValidateTransaction --> CalculateTotal[Calculate Total Cost<br/>per Transaction]
+    
+    CalculateTotal --> Maintenance{Maintenance Phase?}
+    Maintenance -->|Yes| RecordBeban
+    Maintenance -->|No| HarvestTime{Harvest Time?}
+    
+    HarvestTime -->|No| Maintenance
+    HarvestTime -->|Yes| RecordPanen[Record Harvest Event]
+    
+    RecordPanen --> MoreHarvest{More Harvest Events?}
+    MoreHarvest -->|Yes| RecordPanen
+    MoreHarvest -->|No| AggregateHarvest[Aggregate Harvest Data<br/>Total Revenue, Total Quantity<br/>Weighted Avg Selling Price]
+    
+    AggregateHarvest --> CalculateMetrics[Calculate Production Metrics]
+    
+    CalculateMetrics --> CalcBBB[Calculate BBB Total]
+    CalculateMetrics --> CalcBTKL[Calculate BTKL Total]
+    CalculateMetrics --> CalcBOP[Calculate BOP Total]
+    CalculateMetrics --> CalcVariable[Calculate Total Variable Costs]
+    CalculateMetrics --> CalcFixed[Calculate Total Fixed Costs]
+    
+    CalcBBB --> CalcProductionCost[Calculate Total Production Cost]
+    CalcBTKL --> CalcProductionCost
+    CalcBOP --> CalcProductionCost
+    CalcVariable --> CalcProductionCost
+    CalcFixed --> CalcProductionCost
+    
+    CalcProductionCost --> CalcProfit[Calculate Profit/Loss]
+    CalcProfit --> CalcContributionMargin[Calculate Contribution Margin<br/>CM = Revenue - Variable Costs]
+    CalcContributionMargin --> CalcCMUnit[Calculate CM per Unit]
+    CalcCMUnit --> CalcBreakEven[Calculate Break-Even Point<br/>Units & Sales]
+    
+    CalcBreakEven --> GenerateReports[Generate Production Cost Reports]
+    
+    GenerateReports --> ReportCommodity[Report: Per Commodity]
+    GenerateReports --> ReportCycle[Report: Per Planting Cycle]
+    GenerateReports --> ReportFarmer[Report: Summarized by Farmer]
+    GenerateReports --> ReportRegion[Report: Summarized by Region]
+    GenerateReports --> ReportGroup[Report: Group-Level Summary<br/>Optional]
+    
+    ReportCommodity --> ViewReport[Farmer: View & Evaluate Reports]
+    ReportCycle --> ViewReport
+    ReportFarmer --> ViewReport
+    ReportRegion --> ViewReport
+    ReportGroup --> ViewGroupReport[Group Leader: View Group Reports]
+    
+    ViewReport --> EvaluateEfficiency[Farmer: Evaluate Efficiency<br/>Control Cost Drivers]
+    EvaluateEfficiency --> MakeDecision[Farmer: Make Decisions<br/>Based on Profitability<br/>& Break-Even Thresholds]
+    
+    ViewGroupReport --> EndProcess([End: Process Complete])
+    MakeDecision --> EndProcess
+    
+    %% Actor Connections
+    BPPOfficer -.->|Input & Validate| ValidateTransaction
+    BPPOfficer -.->|Generate| GenerateReports
+    Farmer -.->|Benefit from| ViewReport
+    Farmer -.->|Use for| EvaluateEfficiency
+    GroupLeader -.->|View| ViewGroupReport
+    
+    style Start fill:#90EE90
+    style EndProcess fill:#FFB6C1
+    style CreateTanam fill:#87CEEB
+    style RecordPanen fill:#FFD700
+    style CalculateMetrics fill:#FFA500
+    style GenerateReports fill:#DDA0DD
+    style ValidateTransaction fill:#FF6347
+    style ViewReport fill:#98FB98
+    style BPPOfficer fill:#FFE4B5
+    style Farmer fill:#E0E0E0
+    style GroupLeader fill:#D3D3D3
+

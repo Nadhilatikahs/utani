@@ -14,7 +14,8 @@
             {{ Session::get('success') }}
         </div>
     @endif
-    <table class="table table-hover">
+    <div class="table-responsive">
+        <table class="table table-hover text-nowrap">
         <thead class="table-primary">
             <tr>
                 <th>Kode tanam</th>
@@ -72,8 +73,8 @@
     }
 </style>
 
-                        <td class="align-middle  text-right">@if($tm->volume_panen)
-                            Rp.{{format_uang ($tm->volume_panen) }}
+                        <td class="align-middle  text-right">@if($tm->total_volume_kg > 0)
+                            {{ number_format($tm->total_volume_kg, 0, ',', '.') }} kg
                             @else 
                             - 
                             
@@ -122,4 +123,5 @@
              @endforelse
         </tbody>
     </table>
+    </div>
 @endsection

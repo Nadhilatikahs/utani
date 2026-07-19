@@ -36,6 +36,7 @@
         </div>
     @endif
 
+    <div class="table-responsive">
     <table class="table table-hover">
         <thead class="table-primary">
             <tr>
@@ -67,7 +68,6 @@
                         
                             <a href="{{ route('anggotatanis.edit', $d->id_anggota)}}" class="btn btn-success btn-circle">
                             <i class="fas fa-pencil-alt"></i></a>
-                            @if (!$d->hasLahans)
                             <form action="{{ route('anggotatanis.destroy', $d->id_anggota) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_anggota }}">
                                 @csrf
                                 @method('DELETE')
@@ -75,7 +75,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                            @endif
+                            
                         </div>
                     </td>
                 </tr>
@@ -88,6 +88,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
      <!-- Modal Konfirmasi Penghapusan -->
      <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">

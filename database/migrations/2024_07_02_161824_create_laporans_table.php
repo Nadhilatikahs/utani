@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // ✅ Tambah guard: kalau table sudah ada, jangan buat lagi
+        if (Schema::hasTable('laporans')) {
+            return;
+        }
         Schema::create('laporans', function (Blueprint $table) {
             $table->id();
             $table->timestamps();

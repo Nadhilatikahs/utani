@@ -1,0 +1,346 @@
+classDiagram
+    %% Geographic Hierarchy Classes
+    class Provinsi {
+        +bigint id_provinsi
+        +string kode_provinsi
+        +string nama_provinsi
+        +string latitude
+        +string longitude
+        +getKodeprovinsi()
+    }
+    
+    class Kabupaten {
+        +bigint id_kabupaten
+        +string kode_kabupaten
+        +string nama_kabupaten
+        +string latitude
+        +string longitude
+        +bigint id_provinsi
+        +getKodekabupaten()
+    }
+    
+    class Dinas {
+        +bigint id_dinas
+        +string kode_dinas
+        +string nama_dinas
+        +string alamat
+        +string latitude
+        +string longitude
+        +bigint id_kabupaten
+        +getKodedinas()
+    }
+    
+    class Upt {
+        +bigint id_upt
+        +string kode_upt
+        +string nama_upt
+        +string alamat
+        +string latitude
+        +string longitude
+        +bigint id_dinas
+        +getKodeupt()
+    }
+    
+    class Bpp {
+        +bigint id_bpp
+        +string kode_bpp
+        +string nama_bpp
+        +string alamat
+        +string latitude
+        +string longitude
+        +bigint id_upt
+        +getKodebpp()
+    }
+    
+    class Desa {
+        +bigint id_desa
+        +string kode_desa
+        +string nama_desa
+        +string alamat
+        +string latitude
+        +string longitude
+        +bigint id_bpp
+        +getKodedesa()
+    }
+    
+    class KelompokTani {
+        +bigint id_keltani
+        +string kode_keltani
+        +string nama_keltani
+        +string alamat
+        +string latitude
+        +string longitude
+        +bigint id_desa
+        +getKodekeltani()
+        +getKeltaniDetailDesa()
+    }
+    
+    class AnggotaTani {
+        +bigint id_anggota
+        +string kode_anggota
+        +string nama_anggota
+        +string nik
+        +string tempat_lahir
+        +string alamat
+        +string jenis_kelamin
+        +string no_hp
+        +string status_anggota
+        +string kategori_petani
+        +string latitude
+        +string longitude
+        +bigint id_keltani
+        +getKodeanggota()
+        +getAnggotaDetailkeltani()
+    }
+    
+    %% Land and Farming Classes
+    class Lahan {
+        +bigint id_lahan
+        +string kode_lahan
+        +bigint id_anggota
+        +float luas
+        +int jml_petak
+        +getKodelahan()
+        +getLahanDetailanggota()
+        +petani()
+        +tanams()
+    }
+    
+    class Komoditas {
+        +bigint id_komoditas
+        +string kode_komoditas
+        +string nama_komoditas
+        +string kategori
+        +int harga_satuan
+        +getKodekomoditas()
+    }
+    
+    class Tanam {
+        +bigint id_tanam
+        +string kode_tanam
+        +bigint id_lahan
+        +bigint id_komoditas
+        +date tgl_tanam
+        +date tgl_panen
+        +int volume_panen
+        +string keuntungan
+        +int beban_variabel
+        +string beban_fix
+        +getKodetanam()
+        +getTanamDetailtotal()
+        +getTanamDetaillahan()
+        +getTanamDetailkomoditas()
+        +lahan()
+        +komoditas()
+        +panens()
+        +bebantanam()
+        +getTotalPendapatanAttribute()
+        +getTotalBiayaVariabelAttribute()
+        +getTotalBiayaTetapAttribute()
+        +getKeuntunganAktualAttribute()
+        +getTotalBBB()
+        +getTotalBTKL()
+        +getTotalBOP()
+        +getTotalProductionCost()
+        +getTotalRevenue()
+        +getTotalProductionQuantity()
+        +getWeightedAverageSellingPrice()
+        +getContributionMargin()
+        +getContributionMarginPerUnit()
+        +getBreakEvenUnits()
+        +getBreakEvenSales()
+        +getProfitLoss()
+    }
+    
+    class Kategori {
+        +bigint id_kategori
+        +string kode_kategori
+        +string keterangan
+        +isVariable()
+        +isFixed()
+    }
+    
+    class Beban {
+        +bigint id_beban
+        +string kode_beban
+        +string nama_beban
+        +string kategori
+        +bigint id_kategori
+        +string jenis_produksi
+        +string satuan_default
+        +getKodebeban()
+        +getBebanDetailkategori()
+        +normalizeJenisProduksi()
+        +guessJenisProduksi()
+        +resolveJenisProduksi()
+        +bebantanam()
+        +isBBB()
+        +isBTKL()
+        +isBOP()
+        +isVariable()
+        +isFixed()
+    }
+    
+    class Bebantanam {
+        +bigint id_bebantanam
+        +string kode_bebantanam
+        +bigint id_tanam
+        +bigint id_beban
+        +string satuan
+        +int jumlah
+        +int harga
+        +int total
+        +getKodebebantanam()
+        +getBebantanamDetailtanam()
+        +getBebantanamDetailbeban()
+        +tanam()
+        +beban()
+        +getCostType()
+        +getBehaviorType()
+        +calculateTotal()
+    }
+    
+    class Panen {
+        +bigint id_panen
+        +string kode_panen
+        +bigint id_tanam
+        +date tgal_panen
+        +int jumlah
+        +int harga
+        +string hasil_panen
+        +getKodepanen()
+        +getPanenDetailtanam()
+        +tanam()
+        +calculateRevenue()
+        +getQuantity()
+        +getUnitPrice()
+    }
+    
+    %% Financial Classes
+    class User {
+        +bigint id
+        +string name
+        +string email
+        +string password
+        +remember_token
+    }
+    
+    class ChartOfAccounts {
+        +int id
+        +string kode_akun
+        +int id_jenis_transaksi
+        +string nama_akun
+        +string header
+        +string posisi_dr_cr
+        +int saldo_awal
+    }
+    
+    class JenisTransaksi {
+        +int id
+        +string keterangan
+    }
+    
+    class CashTransaction {
+        +int id
+        +enum transaction_type
+        +date transaction_date
+        +decimal amount
+        +text description
+    }
+    
+    class Journal {
+        +bigint No
+        +string akun
+        +decimal debit
+        +decimal kredit
+    }
+    
+    %% Reporting Classes
+    class ProductionCostReport {
+        +generatePerCommodity()
+        +generatePerCycle()
+        +generateByFarmer()
+        +generateByRegion()
+        +generateGroupSummary()
+        +calculateBBBTotal()
+        +calculateBTKLTotal()
+        +calculateBOPTotal()
+        +calculateTotalProductionCost()
+        +calculateTotalVariableCosts()
+        +calculateTotalFixedCosts()
+        +calculateProfitLoss()
+        +calculateContributionMargin()
+        +calculateContributionMarginPerUnit()
+        +calculateBreakEvenUnits()
+        +calculateBreakEvenSales()
+    }
+    
+    class ReportMetrics {
+        +decimal totalBBB
+        +decimal totalBTKL
+        +decimal totalBOP
+        +decimal totalProductionCost
+        +decimal totalVariableCosts
+        +decimal totalFixedCosts
+        +decimal totalRevenue
+        +decimal totalProductionQuantity
+        +decimal weightedAverageSellingPrice
+        +decimal profitLoss
+        +decimal contributionMargin
+        +decimal contributionMarginPerUnit
+        +decimal breakEvenUnits
+        +decimal breakEvenSales
+    }
+    
+    %% Actor Classes
+    class BPPOfficer {
+        +bigint id
+        +string name
+        +string email
+        +inputCostTransaction()
+        +validateTransaction()
+        +generateReport()
+    }
+    
+    class Farmer {
+        +bigint id_anggota
+        +string nama_anggota
+        +viewReports()
+        +evaluateEfficiency()
+        +makeDecisions()
+    }
+    
+    class FarmerGroupLeader {
+        +bigint id
+        +viewGroupSummary()
+        +viewAggregatedReports()
+    }
+    
+    %% Relationships
+    Provinsi "1" --> "*" Kabupaten
+    Kabupaten "1" --> "*" Dinas
+    Dinas "1" --> "*" Upt
+    Upt "1" --> "*" Bpp
+    Bpp "1" --> "*" Desa
+    Desa "1" --> "*" KelompokTani
+    KelompokTani "1" --> "*" AnggotaTani
+    AnggotaTani "1" --> "*" Lahan
+    Lahan "1" --> "*" Tanam
+    Komoditas "1" --> "*" Tanam
+    Tanam "1" --> "*" Bebantanam
+    Tanam "1" --> "*" Panen
+    Beban "1" --> "*" Bebantanam
+    Kategori "1" --> "*" Beban
+    User "1" --> "*" CashTransaction
+    ChartOfAccounts "1" --> "*" CashTransaction
+    JenisTransaksi "1" --> "*" ChartOfAccounts
+    CashTransaction "1" --> "*" Journal
+    Tanam "1" --> "1" ReportMetrics
+    ProductionCostReport "1" --> "*" ReportMetrics
+    BPPOfficer "1" --> "*" Bebantanam
+    BPPOfficer "1" --> "*" ProductionCostReport
+    Farmer "1" --> "*" Tanam
+    Farmer "1" --> "*" ProductionCostReport
+    FarmerGroupLeader "1" --> "*" ProductionCostReport
+    Komoditas "1" --> "*" ProductionCostReport
+

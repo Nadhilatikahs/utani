@@ -6,7 +6,7 @@
                 @method('PUT')
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Update Data</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <input type="text" name="id" id="id_edit" hidden>

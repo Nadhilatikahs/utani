@@ -23,7 +23,7 @@
         <div class="row mb-3">
             
             
-            <div class="form-group"> lahan
+            <div class="form-group"><label for="lahanlabel">Lahan</label>
                 <select class= "form-control select" style ="width:100%;" name="id_lahan" id="id_lahan">
                 <option disabled value> Pilih lahan</option>
                 @foreach($lahans as $lh)
@@ -32,7 +32,7 @@
                 </select>
             </div>
             
-            <div class="form-group">komoditas
+            <div class="form-group"><label for="komoditastlabel">Komoditas</label>
                 <select class= "form-control select" style ="width:100%;" name="id_komoditas" id="id_komoditas">
                 <option disabled value> Pilih Komoditas</option>
                 @foreach($komoditas as $kd)
@@ -43,7 +43,7 @@
                 
             </div>
 
-            <div class="col">Tanggal Tanam
+            <div class="col"><label for="tgltanamlabel">Tanggal Tanam</label>
                 <input type="date" name="tgl_tanam" class="form-control" placeholder="Tanggal Tanam">
             </div>
            </div>
@@ -52,7 +52,8 @@
  
         <div class="row"> 
             
-            <div class="col text-left">
+            <div class="col text-left d-flex gap-2">
+                <a href="{{ route('tanams.index') }}" class="btn btn-secondary">Kembali</a>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>

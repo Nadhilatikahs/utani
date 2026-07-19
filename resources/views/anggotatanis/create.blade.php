@@ -84,7 +84,8 @@
         </div>
 
         <div class="row">
-            <div class="col text-left">
+            <div class="col text-left d-flex gap-2">
+                <a href="{{ route('anggotatanis.index') }}" class="btn btn-secondary">Kembali</a>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>

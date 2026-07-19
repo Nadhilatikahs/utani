@@ -68,9 +68,9 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('logout', 'logout')->middleware('auth')->name('logout');
 });
 Route::middleware('auth')->group(function () {
-    Route::get('dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Route::get('dashboard', function () {
+    //     return view('dashboard');
+    // })->name('dashboard');
     Route::get('/dashboard', [GrafikController::class, 'index'])->name('dashboard');
 
 
@@ -222,10 +222,16 @@ Route::middleware('auth')->group(function () {
 
 
     //Laporan
-    Route::controller(LaporanController::class)->prefix('laporan')->group(function () {
+    Route::controller(\App\Http\Controllers\LaporanController::class)
+    ->prefix('laporan')
+    ->group(function () {
         Route::get('index', 'index')->name('laporan.index');
-        Route::get('show', 'show')->name('laporan.show');
+        Route::get('by-commodity', 'byCommodity')->name('laporan.byCommodity');
+        Route::get('show', 'show')->name('laporan.show');  // pakai ?tanam_id=
+        Route::get('print', 'print')->name('laporan.print');
+        Route::get('preview/{tanam_id}', 'preview')->name('laporan.preview');
     });
+
 
     //dashbooard grafik
     Route::controller(GrafikController::class)->prefix('grafik')->group(function () {
@@ -306,6 +312,16 @@ Route::middleware('auth')->group(function () {
         Route::get('form', [TransactionController::class, 'formArusKas']);
         Route::post('simpan', [TransactionController::class, 'store']);
     });
+    // auth insert input transaksi bebantanam
+    Route::get('/bebantanam/by-tanam/{id_tanam}', [BebantanamController::class, 'indexByTanam'])
+        ->name('bebantanam.byTanam');
+
+    Route::post('/bebantanam/store-batch/{id_tanam}', [BebantanamController::class, 'storeBatch'])
+        ->name('bebantanam.storeBatch');
+
+    Route::get('/bebantanam/create-batch/{id_tanam}', [BebantanamController::class, 'createBatch'])
+        ->name('bebantanam.createBatch');
+    
 
 });
 

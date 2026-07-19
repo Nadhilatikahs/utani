@@ -17,12 +17,11 @@ return new class extends Migration
             $table->string('nama_anggota');
             $table->string('nik');
             $table->string('tempat_lahir');
-            $table->string('alamat');
+            $table->string('alamat');              // ✅ cukup sekali
             $table->string('jenis_kelamin');
-            $table->int('no_hp');
+            $table->string('no_hp', 20);           // ✅ ganti int() -> string()
             $table->string('status_anggota');
             $table->string('kategori_petani');
-            $table->string('alamat');
             $table->string('latitude');
             $table->string('longitude');
             $table->bigInteger('id_keltani')->unsigned();

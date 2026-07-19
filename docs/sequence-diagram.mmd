@@ -1,0 +1,74 @@
+sequenceDiagram
+    participant User
+    participant AnggotaTaniController
+    participant LahanController
+    participant TanamController
+    participant BebantanamController
+    participant PanenController
+    participant BebanModel
+    participant TanamModel
+    participant PanenModel
+    participant Database
+    
+    Note over User,Database: Farmer Registration and Land Setup
+    User->>AnggotaTaniController: Register Anggota Tani
+    AnggotaTaniController->>Database: Insert AnggotaTani
+    Database-->>AnggotaTaniController: Return id_anggota
+    AnggotaTaniController-->>User: Registration Success
+    
+    User->>LahanController: Register Lahan
+    LahanController->>Database: Insert Lahan (id_anggota)
+    Database-->>LahanController: Return id_lahan
+    LahanController-->>User: Lahan Created
+    
+    Note over User,Database: Planting Process
+    User->>TanamController: Create Tanam Record
+    TanamController->>Database: Insert Tanam (id_lahan, id_komoditas)
+    Database-->>TanamController: Return id_tanam
+    TanamController-->>User: Tanam Created
+    
+    Note over User,Database: Cost Recording Process
+    User->>BebantanamController: Add Beban Tanam
+    BebantanamController->>BebanModel: Get Beban Details
+    BebanModel->>Database: Query Beban by id_kategori
+    Database-->>BebanModel: Return Beban Data
+    BebanModel-->>BebantanamController: Beban Details
+    
+    BebantanamController->>Database: Insert Bebantanam (id_tanam, id_beban, jumlah, harga)
+    Database->>Database: Trigger: Calculate Total (jumlah * harga)
+    Database->>Database: Trigger: Update Tanam (beban_variabel or beban_fix)
+    Database-->>BebantanamController: Bebantanam Created
+    
+    BebantanamController->>TanamModel: Recalculate Costs
+    TanamModel->>Database: Query All Bebantanam for Tanam
+    Database-->>TanamModel: Return Bebantanam List
+    TanamModel->>Database: Update Tanam (beban_variabel, beban_fix)
+    Database-->>TanamModel: Update Success
+    TanamModel-->>BebantanamController: Costs Updated
+    BebantanamController-->>User: Beban Tanam Recorded
+    
+    Note over User,Database: Harvest Process
+    User->>PanenController: Record Panen
+    PanenController->>Database: Insert Panen (id_tanam, jumlah, harga)
+    Database->>Database: Trigger: Calculate hasil_panen (jumlah * harga)
+    Database->>Database: Trigger: Update Tanam (volume_panen, tgl_panen)
+    Database-->>PanenController: Panen Recorded
+    
+    PanenController->>TanamModel: Calculate Profit
+    TanamModel->>Database: Query Tanam with Panen and Bebantanam
+    Database-->>TanamModel: Return Complete Tanam Data
+    TanamModel->>TanamModel: Calculate: keuntungan = volume_panen - beban_variabel - beban_fix
+    TanamModel->>Database: Update Tanam (keuntungan)
+    Database-->>TanamModel: Profit Calculated
+    TanamModel-->>PanenController: Profit Updated
+    PanenController-->>User: Harvest Recorded with Profit
+    
+    Note over User,Database: Financial Transaction Process
+    User->>TanamController: View Tanam Report
+    TanamController->>TanamModel: Get Tanam with Relations
+    TanamModel->>Database: Query Tanam JOIN Lahan JOIN Komoditas<br/>LEFT JOIN Panen LEFT JOIN Bebantanam
+    Database-->>TanamModel: Return Complete Data
+    TanamModel->>TanamModel: Calculate Total Pendapatan<br/>Calculate Total Biaya<br/>Calculate Keuntungan
+    TanamModel-->>TanamController: Report Data
+    TanamController-->>User: Display Report
+

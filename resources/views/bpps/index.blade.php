@@ -46,15 +46,14 @@
                                
                                 <a href="{{ route('bpps.edit', $d->id_bpp)}}" type="button" class="btn btn-success btn-circle">
                                 <i class="fas fa-pencil-alt"></i> </a>
-                                @if (!$d->hasDesa)
-                            <form action="{{ route('bpps.destroy', $d->id_bpp) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_bpp }}">
+                                <form action="{{ route('bpps.destroy', $d->id_bpp) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_bpp }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" onclick="deleteConfirm({{ $d->id_bpp }}, '{{ $d->kode_bpp }}')" class="btn btn-danger btn-circle">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        @endif
+                        
                             </div>
                         </td>
                     </tr>

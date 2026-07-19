@@ -1,0 +1,76 @@
+flowchart LR
+    %% Actor Definition
+    PegawaiBPP["👤 Pegawai BPP"]
+
+    %% System Boundary
+    subgraph System["Sistem Informasi Akuntansi Biaya Produksi Usaha Tani"]
+        UC1(["🔑 Login"])
+        UC2(["📊 Mengakses Dashboard"])
+        UC3(["👥 Mengelola Data Kelompok Tani"])
+        UC4(["👨‍🌾 Mengelola Data Petani"])
+        UC5(["🌾 Mengelola Data Komoditas"])
+        UC6(["🗺️ Mengelola Data Lahan"])
+        UC7(["💰 Mengelola Jenis Biaya / Master Beban"])
+        UC8(["📝 Mencatat Kegiatan Tanam"])
+        UC9(["💵 Mencatat Biaya Produksi"])
+        UC10(["📈 Melihat Total Biaya Produksi"])
+        UC11(["📋 Membuat Laporan Biaya Produksi"])
+        UC12(["📥 Mengunduh Laporan PDF"])
+        UC13(["🚪 Logout"])
+    end
+
+    %% Actor Associations (Solid Lines)
+    PegawaiBPP --- UC1
+    PegawaiBPP --- UC2
+    PegawaiBPP --- UC3
+    PegawaiBPP --- UC4
+    PegawaiBPP --- UC5
+    PegawaiBPP --- UC6
+    PegawaiBPP --- UC7
+    PegawaiBPP --- UC8
+    PegawaiBPP --- UC9
+    PegawaiBPP --- UC10
+    PegawaiBPP --- UC11
+    PegawaiBPP --- UC12
+    PegawaiBPP --- UC13
+
+    %% Include Relationships (Dashed Arrows)
+    UC2 -.->|"<<include>>"| UC1
+    UC3 -.->|"<<include>>"| UC1
+    UC4 -.->|"<<include>>"| UC1
+    UC5 -.->|"<<include>>"| UC1
+    UC6 -.->|"<<include>>"| UC1
+    UC7 -.->|"<<include>>"| UC1
+    UC8 -.->|"<<include>>"| UC1
+    UC9 -.->|"<<include>>"| UC1
+    UC10 -.->|"<<include>>"| UC1
+    UC11 -.->|"<<include>>"| UC1
+    UC12 -.->|"<<include>>"| UC1
+    UC13 -.->|"<<include>>"| UC1
+
+    %% Specific Workflow Includes
+    UC10 -.->|"<<include>>"| UC9
+    UC11 -.->|"<<include>>"| UC10
+    UC12 -.->|"<<include>>"| UC11
+
+    %% Styling for Premium Look
+    style PegawaiBPP fill:#FFEEDD,stroke:#D57C00,stroke-width:2px,font-weight:bold;
+    style System fill:#F8F9FA,stroke:#4A90E2,stroke-width:2px,font-weight:bold;
+    
+    %% Styling Use Cases
+    style UC1 fill:#FFF0F0,stroke:#E53E3E,stroke-width:1.5px;
+    style UC13 fill:#FFF0F0,stroke:#E53E3E,stroke-width:1.5px;
+    
+    style UC2 fill:#E8F4FD,stroke:#2B78E4,stroke-width:1.5px;
+    style UC3 fill:#E8F4FD,stroke:#2B78E4,stroke-width:1.5px;
+    style UC4 fill:#E8F4FD,stroke:#2B78E4,stroke-width:1.5px;
+    style UC5 fill:#E8F4FD,stroke:#2B78E4,stroke-width:1.5px;
+    style UC6 fill:#E8F4FD,stroke:#2B78E4,stroke-width:1.5px;
+    style UC7 fill:#E8F4FD,stroke:#2B78E4,stroke-width:1.5px;
+    
+    style UC8 fill:#EAFAF1,stroke:#2ECC71,stroke-width:1.5px;
+    style UC9 fill:#EAFAF1,stroke:#2ECC71,stroke-width:1.5px;
+    
+    style UC10 fill:#F4ECF7,stroke:#8E44AD,stroke-width:1.5px;
+    style UC11 fill:#F4ECF7,stroke:#8E44AD,stroke-width:1.5px;
+    style UC12 fill:#F4ECF7,stroke:#8E44AD,stroke-width:1.5px;

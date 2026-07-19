@@ -40,7 +40,6 @@
                             <a href="{{ route('kategori.edit', $k->id_kategori) }}" class="btn btn-success btn-circle"> 
                             <i class="fas fa-pencil-alt"></i>
                             </a>
-                            @if (!$k->hasBebans)
                             <form action="{{ route('kategori.destroy', $k->id_kategori) }}" method="POST" class="d-inline" id="delete-form-{{ $k->id_kategori }}">
                                 @csrf
                                 @method('DELETE')
@@ -48,7 +47,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                            @endif
+                            
 						</td>
                     </tr>
                 

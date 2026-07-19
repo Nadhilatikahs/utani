@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // ✅ Kalau tabel sudah ada (dari import DB lama), jangan buat lagi
+        if (Schema::hasTable('cash_transactions')) {
+            return;
+        }
         Schema::create('cash_transactions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();

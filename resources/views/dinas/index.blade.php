@@ -47,15 +47,14 @@
                                 <a href="{{ route('dinas.edit', $d->id_dinas)}}" type="button" class="btn btn-success btn-circle">
                                 <i class="fas fa-pencil-alt"></i>
                                 </a>
-                                @if (!$d->hasUpts)
-                            <form action="{{ route('dinas.destroy', $d->id_dinas) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_dinas }}">
+                                <form action="{{ route('dinas.destroy', $d->id_dinas) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_dinas }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" onclick="deleteConfirm({{ $d->id_dinas }}, '{{ $d->kode_dinas }}')" class="btn btn-danger btn-circle">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        @endif
+                        
                             </div>
                         </td>
                     </tr>

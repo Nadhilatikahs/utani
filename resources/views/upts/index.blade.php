@@ -46,15 +46,14 @@
                                
                                 <a href="{{ route('upts.edit', $d->id_upt)}}" type="button" class="btn btn-success btn-circle">
                                 <i class="fas fa-pencil-alt"></i></a>
-                                @if (!$d->hasBpps)
-                            <form action="{{ route('upts.destroy', $d->id_upt) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_upt }}">
+                                <form action="{{ route('upts.destroy', $d->id_upt) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_upt }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" onclick="deleteConfirm({{ $d->id_upt }}, '{{ $d->kode_upt }}')" class="btn btn-danger btn-circle">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        @endif
+                        
                             </div>
                         </td>
                     </tr>

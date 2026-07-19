@@ -41,15 +41,14 @@
                                 <i class="fas fa-pencil-alt"></i>
                                 </a>
                                 
-                                @if (!$kb->hasDinas)
-                            <form action="{{ route('kabupatens.destroy', $kb->id_kabupaten) }}" method="POST" class="d-inline" id="delete-form-{{ $kb->id_kabupaten }}">
+                                <form action="{{ route('kabupatens.destroy', $kb->id_kabupaten) }}" method="POST" class="d-inline" id="delete-form-{{ $kb->id_kabupaten }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" onclick="deleteConfirm({{ $kb->id_kabupaten }}, '{{ $kb->kode_kabupaten }}')" class="btn btn-danger btn-circle">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        @endif
+                        
                             </div>
                         </td>
                     </tr>

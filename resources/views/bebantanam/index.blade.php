@@ -1,8 +1,7 @@
-<!-- /resources/views/products/index.blade.php -->
 @extends('layouts.app')
-  
-@section('title', 'List')
-  
+
+@section('title', 'Data Beban Tanam')
+
 @section('contents')
     <div class="d-flex align-items-center justify-content-between">
         <h1 class="mb-0"> Data Beban Tanam</h1>
@@ -11,56 +10,45 @@
     <hr />
     @if(Session::has('success'))
         <div id="flash-message" class="alert alert-success" role="alert">
-            {{ Session::get('success') }}
+            <i class="fas fa-check-circle mr-2"></i>{{ Session::get('success') }}
         </div>
     @endif
-    <table class="table table-hover">
-        <thead class="table-primary">
-            <tr>
-                <th>Kode</th>
-                <th>ID Tanam</th>
-                <th>Nama Beban</th>
-                <th>Satuan</th>
-                <th class="text-end">Jumlah</th>
-                <th class="text-end">Harga</th>
-                <th class="text-end">Total</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>+
-           
-                @forelse($bebantanam as $btm)
-                    <tr>
-                        <td class="align-middle">{{ $btm->kode_bebantanam }}</td>
-                        <td class="align-middle">{{ $btm->kode_tanam}}</td>
-                        <td class="align-middle">{{ $btm->nama_beban }}</td>
-                        <td class="align-middle">{{ $btm->satuan }}</td>
-                        <td class="align-middle text-end">{{number_format ($btm->jumlah) }}</td>
-                        <td class="align-middle text-end">Rp. {{format_uang ($btm->harga) }}</td>
-                        <td class="align-middle text-end">Rp. {{ format_uang($btm->jumlah * $btm->harga ) }}</td>
-                       
-                        <td class="align-middle"
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                               
-                                <a href="{{ route('bebantanam.edit', $btm->id_bebantanam)}}" type="button" class="btn btn-warning">Edit</a>
-                                <form action="{{ route('bebantanam.destroy', $btm->id_bebantanam) }}" method="POST" type="button" class="d-inline" id="delete-form-{{ $btm->id_bebantanam }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="deleteConfirm({{ $btm->id_bebantanam }}, '{{ $btm->id_bebantanam }}')" class="btn btn-danger btn-circle">
-                                    <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-gradient-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-list mr-2"></i>Daftar Beban Tanam per Kode Tanam</h5>
+        </div>
+        <div class="card-body">
+            @forelse($tanamsWithBeban as $tanam)
+                <div class="card mb-3 border">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 fw-bold">
+                                    <i class="fas fa-seedling mr-2" style="color: var(--button-green);"></i>
+                                    {{ $tanam->kode_tanam }}
+                                </h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-list mr-1"></i>{{ $tanam->bebantanam_count }} item beban
+                                </small>
                             </div>
-                        </td>
-                    </tr>
-                
-                @empty
-                                  <div class="alert alert-danger">
-                                      Data Beban Tanam belum Tersedia.
-                                  </div>
-             @endforelse
-        </tbody>
-    </table>
+                            <a href="{{ route('bebantanam.byTanam', $tanam->id_tanam) }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye mr-1"></i>Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Belum ada data beban tanam.</p>
+                    <a href="{{ route('bebantanam.create') }}" class="btn btn-primary">
+                        <i class="fas fa-plus mr-2"></i>Tambah Data Pertama
+                    </a>
+                </div>
+            @endforelse
+        </div>
+    </div>
     <!-- Modal Konfirmasi Penghapusan -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -78,7 +66,7 @@
                 </div>
             </div>
         </div>
-    </div>   
+    </div>
     <script>
         let formToDelete = null;
 

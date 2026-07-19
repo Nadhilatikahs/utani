@@ -17,3 +17,17 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Laravel specific ignores
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*.php
+/storage/framework/views/.gitignore
+
+# Temp and log files
+error.log
+/temp_diff_app.txt
+/fix_btn_close.php
+/fix_buttons.php
+/fix_delete_buttons.php
+/public/search_code.php

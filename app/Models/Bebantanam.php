@@ -9,73 +9,95 @@ use Illuminate\Support\Facades\DB;
 class Bebantanam extends Model
 {
     use HasFactory;
+
     protected $table = "bebantanam";
     protected $primaryKey = "id_bebantanam";
-    protected $fillable = [ 
-        'id_bebantanam','kode_bebantanam','id_tanam','id_beban','satuan','jumlah','harga','total'];
 
-        protected static function boot()
-        {
-            parent::boot();
-    
-            // Menggunakan event `creating` untuk menghitung total sebelum membuat data baru
-            static::creating(function ($model) {
-                $model->total = $model->jumlah * $model->harga;
-            });
-    
-            // Menggunakan event `updating` untuk menghitung total sebelum memperbarui data
-            static::updating(function ($model) {
-                $model->total = $model->jumlah * $model->harga;
-            });
-        }
+    protected $fillable = [
+        'id_bebantanam',
+        'kode_bebantanam',
+        'id_tanam',
+        'id_beban',
+        'satuan',
+        'jumlah',
+        'harga',
+        'total',
+    ];
 
-        
+    protected static function boot()
+    {
+        parent::boot();
 
-        
+        // Hitung total sebelum insert
+        static::creating(function ($model) {
+            $model->total = $model->jumlah * $model->harga;
+        });
 
-        public static function getBebantanamDetailtanam()
-        {
-           // query kode beban tanam
+        // Hitung total sebelum update
+        static::updating(function ($model) {
+            $model->total = $model->jumlah * $model->harga;
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI
+    |--------------------------------------------------------------------------
+    */
+
+    public function tanam()
+    {
+        return $this->belongsTo(Tanam::class, 'id_tanam', 'id_tanam');
+    }
+
+    public function beban()
+    {
+        return $this->belongsTo(Beban::class, 'id_beban', 'id_beban');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FUNGSI LAMA
+    |--------------------------------------------------------------------------
+    */
+
+    public static function getBebantanamDetailtanam()
+    {
         $sql = "SELECT a.*,b.kode_tanam
                 FROM bebantanam a
                 JOIN tanams b
-                ON (a.id_tanam=b.id_tanam)";
+                  ON (a.id_tanam=b.id_tanam)";
         $bebantanam = DB::select($sql);
 
         return $bebantanam;
-        }
+    }
 
-        public static function getBebantanamDetailbeban()
-        {
-           // query kode beban tanam
+    public static function getBebantanamDetailbeban()
+    {
         $sql = "SELECT a.*,b.nama_beban
                 FROM bebantanam a
                 JOIN bebans b
-                ON (a.id_beban=b.id_beban)";
+                  ON (a.id_beban=b.id_beban)";
         $bebantanams = DB::select($sql);
 
         return $bebantanams;
-        }
+    }
 
-        public static function getKodebebantanam()
+    public static function getKodebebantanam()
     {
-        // query kode bebantanam
-        $sql = "SELECT IFNULL(MAX(kode_bebantanam), 'BT-000') as kode_bebantanam 
+        $sql = "SELECT IFNULL(MAX(kode_bebantanam), 'BT-000') as kode_bebantanam
                 FROM bebantanam";
         $bebantanam = DB::select($sql);
 
-        // cacah hasilnya
         foreach ($bebantanam as $beban) {
             $bt = $beban->kode_bebantanam;
         }
-        // Mengambil substring tiga digit akhir dari string PR-000
-        $noawal = substr($bt,-3);
-        $noakhir = $noawal+1; //menambahkan 1, hasilnya adalah integer cth 1
-        
-        //menyambung dengan string PR-001
-        $noakhir = 'BT-'.str_pad($noakhir,3,"0",STR_PAD_LEFT); 
+
+        $noawal  = substr($bt, -3);
+        $noakhir = $noawal + 1;
+
+        $noakhir = 'BT-'.str_pad($noakhir, 3, "0", STR_PAD_LEFT);
 
         return $noakhir;
-
     }
 }

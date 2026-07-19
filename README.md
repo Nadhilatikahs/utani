@@ -1,67 +1,207 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🌾 UsahaTani (Agricultural Cost-Benefit & Spatial Management System)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel Version](https://img.shields.io/badge/Laravel-v10.x-red.svg)](https://laravel.com)
+[![PHP Version](https://img.shields.io/badge/PHP-%5E8.1-blue.svg)](https://www.php.net)
+[![Machine Learning](https://img.shields.io/badge/PHP--ML-K--Means-green.svg)](https://github.com/php-ai/php-ml)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## About Laravel
+**UsahaTani** is a comprehensive agricultural enterprise management and spatial analysis platform built with the Laravel framework. It is designed to assist agricultural organizations, extension centers, and farmers in monitoring planting cycles, recording operational expenses, auditing harvests, executing financial accounting, and performing geospatial clustering analysis to assess farming efficiency and profitability.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌟 Key Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. 🗺️ Geographic & Administrative Hierarchy
+Tracks and structures farming entities across multiple administrative layers in Indonesia:
+*   **Hierarchical Structure:** `Provinsi` (Province) → `Kabupaten` (Regency) → `Dinas` (Agriculture Office) → `UPT` (Technical Unit) → `BPP` (Extension Center) → `Desa` (Village).
+*   **Farmer Profiling:** Manages `Kelompok Tani` (Farmer Groups), `Anggota Tani` (Farmers), and their corresponding `Lahan` (Plots of farmland).
+*   **Spatial Mapping:** Leaflet-based geographic selection and visualization allowing coordinates (`latitude`, `longitude`) to be recorded for farms, groups, and offices.
 
-## Learning Laravel
+### 2. 🚜 Planting & Harvest Cycles
+*   **Planting Logs (`Tanam`):** Initiates crop cycles by linking specific plots of land (`Lahan`), crop types (`Komoditas`), and planting/harvest schedule estimates.
+*   **Expense Auditing (`Bebantanam`):** Allows batch or individual cost-entry for labor, fertilizers, seeds, and overhead. Expenses are categorized by type (Variable vs. Fixed) and production stage (e.g., Land Prep, Fertilization, Maintenance, Harvest).
+*   **Harvest Records (`Panen`):** Records harvest dates, actual yields, selling prices, and crop statuses (e.g., success, partial failure, total failure). It automatically updates profits and Revenue-to-Cost (R/C) ratios in the planting logs.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 3. 🤖 Machine Learning Clustering (K-Means)
+*   **Smart Segmentation:** Implements K-Means clustering algorithm using the `php-ai/php-ml` package to segment agricultural performance into three distinct clusters.
+*   **Economic Indicators:** Clusters data based on the **R/C Ratio** (Revenue-to-Cost Ratio) to classify regions or crops into high, medium, and low-efficiency categories.
+*   **Multi-Level Analysis:** Can run clustering comparisons across multiple dimensions:
+    *   *Per Desa* (Villages)
+    *   *Per UPT* (Technical Units)
+    *   *Per Kabupaten* (Regencies)
+    *   *Per Komoditas* (Commodities)
+*   **Spatial Visualization:** Renders clustering groups directly onto Leaflet maps using color-coded nodes.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 4. 🪙 Financial Accounting & Cash Flow
+*   **Chart of Accounts (COA):** Structures standard financial ledgers.
+*   **Double-Entry Journaling:** Records general journal entries (`Journal` & `GeneralJournal`) tracking Debits and Credits.
+*   **Cash Flow Statements (`Arus Kas`):** Monitors operational cash transactions and generates real-time cash inflows and outflows summaries.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 5. 📊 Reports & Visual Dashboards
+*   **Dynamic Charts:** Visualizes crop production, revenue, and comparison of farmer group incomes using ChartJS.
+*   **PDF Generation:** Exports detailed invoices, ledger lists, and financial summaries to PDF via `laravel-dompdf`.
+*   **Excel Operations:** Seamlessly imports and exports farmer rosters using `phpoffice/phpspreadsheet`.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠️ Technology Stack
 
-### Premium Partners
+| Component | Technology / Library | Description |
+| :--- | :--- | :--- |
+| **Backend Framework** | Laravel 10.x | Core application MVC architecture & Eloquent ORM |
+| **PHP Runtime** | PHP >= 8.1 | Backend scripting environment |
+| **Machine Learning** | `php-ai/php-ml` | KMeans clustering computation |
+| **Maps & GIS** | Leaflet.js | Geospatial map rendering & coordinate picking |
+| **PDF Reporting** | `barryvdh/laravel-dompdf` | PDF report exporter |
+| **Spreadsheets** | `phpoffice/phpspreadsheet` | Excel import/export of farmer rosters |
+| **Database** | MySQL / PostgreSQL | Relational database storage |
+| **Theme / CSS** | SB Admin 2 (Modified) | Responsive layout customized with an agricultural green theme |
+| **Visualization** | ChartJS | Interactive charts and graphs |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+## 📑 Glossary of Terms
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Because the application is designed for Indonesian agricultural structures, the database tables use Indonesian terminology:
 
-## Code of Conduct
+*   **Tanam:** Planting cycle instance.
+*   **Panen:** Harvest transaction.
+*   **Beban:** Expenses/Costs definitions.
+*   **Bebantanam:** Active expenses logged against a specific planting cycle.
+*   **Kelompok Tani (Keltani):** Local farmer groups/collectives.
+*   **Anggota Tani:** Registered individual farmers.
+*   **Lahan:** Agricultural plots of land.
+*   **Komoditas:** Crop commodities (e.g., Rice, Corn, Shallots).
+*   **BPP (Balai Penyuluhan Pertanian):** Sub-district agricultural advisory extension center.
+*   **UPT (Unit Pelaksana Teknis):** Sub-district/regional agricultural technical unit.
+*   **Dinas:** Regency-level governmental agriculture agency.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🗄️ Database Relationships (ERD)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Below is the database structure depicting the geographic hierarchy, operational tracking, and accounting modules.
 
-## License
+```mermaid
+erDiagram
+    %% Geographic Hierarchy
+    PROVINSI ||--o{ KABUPATEN : "has"
+    KABUPATEN ||--o{ DINAS : "has"
+    DINAS ||--o{ UPT : "has"
+    UPT ||--o{ BPP : "has"
+    BPP ||--o{ DESA : "has"
+    DESA ||--o{ KELOMPOKTANI : "has"
+    KELOMPOKTANI ||--o{ ANGGOTATANI : "has"
+    
+    %% Land and Farming
+    ANGGOTATANI ||--o{ LAHAN : "owns"
+    LAHAN ||--o{ TANAM : "used_for"
+    KOMODITAS ||--o{ TANAM : "planted"
+    TANAM ||--o{ BEBANTANAM : "has_costs"
+    TANAM ||--o{ PANEN : "produces"
+    BEBAN ||--o{ BEBANTANAM : "used_in"
+    KATEGORI ||--o{ BEBAN : "categorizes"
+    
+    %% Financial
+    USER ||--o{ CASH_TRANSACTION : "creates"
+    CHART_OF_ACCOUNTS ||--o{ CASH_TRANSACTION : "uses"
+    JENIS_TRANSAKSI ||--o{ CHART_OF_ACCOUNTS : "classifies"
+    CASH_TRANSACTION ||--o{ JOURNAL : "recorded_in"
+    JOURNAL ||--o{ GENERAL_JOURNAL : "contains"
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# usahatani
+> [!NOTE]
+> Additional diagrams documenting classes, business process flows (BPMN), use-cases, and sequence diagrams can be found in the [docs/](file:///c:/laragon/data/utani/docs) directory.
+
+---
+
+## 🚀 Installation & Setup
+
+Follow these steps to run the UsahaTani application locally:
+
+### Prerequisites
+Make sure you have the following installed on your machine:
+*   PHP >= 8.1
+*   Composer
+*   Node.js & NPM
+*   Database server (e.g., MySQL, MariaDB, or PostgreSQL)
+
+### Step-by-Step Installation
+
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/your-username/usahatani.git
+    cd usahatani
+    ```
+
+2.  **Install PHP Dependencies:**
+    ```bash
+    composer install
+    ```
+
+3.  **Install Front-End Dependencies:**
+    ```bash
+    npm install
+    ```
+
+4.  **Configure Environment Variables:**
+    Copy the `.env.example` file to `.env`:
+    ```bash
+    cp .env.example .env
+    ```
+    Open the `.env` file and set your database connection:
+    ```env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=usahatani_db
+    DB_USERNAME=your_db_username
+    DB_PASSWORD=your_db_password
+    ```
+
+5.  **Generate Application Key:**
+    ```bash
+    php artisan key:generate
+    ```
+
+6.  **Run Database Migrations & Seeds:**
+    Create the database schema:
+    ```bash
+    php artisan migrate
+    ```
+    *(Optional)* Run seeds to populate initial configuration types (if available):
+    ```bash
+    php artisan db:seed
+    ```
+
+7.  **Compile Assets:**
+    Compile Javascript and CSS bundles:
+    ```bash
+    npm run dev
+    ```
+
+8.  **Run the Local Server:**
+    Start Laravel's development server:
+    ```bash
+    php artisan serve
+    ```
+    Access the application in your browser at `http://127.0.0.1:8000`.
+
+---
+
+## 📋 Recommended System Workflow
+
+To utilize the platform efficiently, follow this standard operations sequence:
+
+1.  **Setup Geography & Officers:** Configure provinces, regencies, dinas offices, UPTs, and BPP centers. Register farmer groups (`Kelompok Tani`) and individual farmers (`Anggota Tani`).
+2.  **Define Assets & Items:** Log cultivable plots (`Lahan`) under each farmer. Define agricultural commodities and expense standard rates (`Beban`).
+3.  **Create Planting Cycle (`Tanam`):** Launch a planting cycle for a plot, selecting the commodity and expected timelines.
+4.  **Manage Costs:** Log costs (`Bebantanam`) throughout the season (fertilizers, pesticides, equipment hire, seed costs).
+5.  **Harvest Logging (`Panen`):** Log harvesting dates and yield weights. The system automatically computes gross revenues, net profits, and the final R/C ratio.
+6.  **Analyze & Report:** Generate commodity reports or cash flow sheets, and open the Clustering panel to perform K-Means analytics on regional efficiency.
+
+---
+
+## 📜 License
+
+The UsahaTani project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

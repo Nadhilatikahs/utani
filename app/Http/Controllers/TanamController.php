@@ -20,14 +20,23 @@ class TanamController extends Controller
      */
     public function index()
     {
-        $tanams = DB::table('tanams')
-        ->join('lahans', 'tanams.id_lahan', '=', 'lahans.id_lahan')
-        ->join('komoditas', 'tanams.id_komoditas', '=', 'komoditas.id_komoditas')
-        ->select('lahans.*', 'tanams.*', 'komoditas.*')
-        ->get();
+        $tanams = Tanam::with(['lahan', 'komoditas', 'panens', 'bebantanam.beban'])
+            ->orderBy('id_tanam', 'desc')
+            ->get();
 
-        return view('tanams.index',compact('tanams')
-        );
+        foreach ($tanams as $tm) {
+            // Map relation properties to match what the view expects
+            $tm->kode_lahan = $tm->lahan->kode_lahan ?? '-';
+            $tm->nama_komoditas = $tm->komoditas->nama_komoditas ?? '-';
+            $tm->total_volume_kg = $tm->panens->sum('jumlah');
+            
+            // Use dynamically calculated attributes from the model instead of raw DB columns
+            $tm->beban_variabel = $tm->total_biaya_variabel;
+            $tm->beban_fix = $tm->total_biaya_tetap;
+            $tm->keuntungan = $tm->keuntungan_aktual;
+        }
+
+        return view('tanams.index', compact('tanams'));
     }
 
     

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Data Provinsi')
+@section('title', 'Tambah Data Kabupaten')
 
 @section('style')
 <style>
@@ -12,68 +12,81 @@
 @endsection
 
 @section('contents')
-    <h1 class="mb-0">Provinsi</h1>
+    <h1 class="mb-0">Tambah Data Kabupaten</h1>
     <hr />
-    <form action="{{ route('provinsis.store') }}" method="POST" enctype="multipart/form-data">
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <b>Validation failed:</b>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $e)
+                    <li>{{ $e }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('kabupatens.store') }}" method="POST">
         @csrf
+
         <fieldset disabled>
             <div class="mb-3">
-                <label for="kodeprovinsilabel">Kode Provinsi</label>
-                <input class="form-control form-control-solid" id="kode_provinsi_tampil" name="kode_provinsi_tampil" type="text" placeholder="Contoh: PV-001" value="{{ $kode_provinsi }}" readonly>
+                <label for="kode_kabupaten_tampil" class="form-label">Kode Kabupaten</label>
+                <input class="form-control" id="kode_kabupaten_tampil" name="kode_kabupaten_tampil" type="text"
+                    value="{{ $kode_kabupaten }}" readonly>
             </div>
         </fieldset>
-        <input type="hidden" id="kode_provinsi" name="kode_provinsi" value="{{ $kode_provinsi }}">
+        <input type="hidden" id="kode_kabupaten" name="kode_kabupaten" value="{{ $kode_kabupaten }}">
 
         <div class="row mb-3">
-            <div class="col">
-                <input type="text" name="nama_provinsi" id="nama_provinsi" class="form-control" placeholder="Nama provinsi" pattern="[A-Za-z\s]+" title="Hanya huruf yang diizinkan" required>
-                @error('nama_provinsi')
-                <div id="flash-message" class="alert alert-danger">{{ $message }}</div>
-                @enderror
+            <div class="col-md-6">
+                <label for="id_provinsi" class="form-label">Provinsi</label>
+                <select name="id_provinsi" id="id_provinsi" class="form-control" required>
+                    <option value="" disabled selected>Pilih Provinsi</option>
+                    @foreach ($provinsis as $prov)
+                        <option value="{{ $prov->id_provinsi }}" {{ old('id_provinsi') == $prov->id_provinsi ? 'selected' : '' }}>
+                            {{ $prov->kode_provinsi ?? '' }} - {{ $prov->nama_provinsi }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="nama_kabupaten" class="form-label">Nama Kabupaten</label>
+                <input type="text" name="nama_kabupaten" id="nama_kabupaten" class="form-control"
+                    placeholder="Contoh: Bandung" value="{{ old('nama_kabupaten') }}" required>
             </div>
         </div>
 
         <div class="row mb-3">
-            <div class="col">
-                <input type="text" name="latitude" id="latitude" class="form-control" placeholder="Latitude (Garis Lintang)" pattern="-?\d+(\.\d+)?" title="Harap masukkan titik latitude yang valid" readonly required>
-                @error('latitude')
-                <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
+            <div class="col-md-6">
+                <label for="latitude" class="form-label">Latitude</label>
+                <input type="text" name="latitude" id="latitude" class="form-control"
+                    placeholder="Klik di peta untuk isi otomatis" value="{{ old('latitude') }}" readonly required>
             </div>
-            <div class="col">
-                <input type="text" name="longitude" id="longitude" class="form-control" placeholder="Longitude (Garis Bujur)" pattern="-?\d+(\.\d+)?" title="Harap masukkan titik longitude yang valid" readonly required>
-                @error('longitude')
-                <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
+            <div class="col-md-6">
+                <label for="longitude" class="form-label">Longitude</label>
+                <input type="text" name="longitude" id="longitude" class="form-control"
+                    placeholder="Klik di peta untuk isi otomatis" value="{{ old('longitude') }}" readonly required>
             </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-4">
+            <label class="form-label">Pilih Lokasi Kabupaten di Peta</label>
             <div id="map"></div>
         </div>
 
-        <div class="row">
-            <div class="col text-left">
-                <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="text-left d-flex gap-2">
+                <a href="{{ route('kabupatens.index') }}" class="btn btn-secondary">Kembali</a>
+                <button type="submit" class="btn btn-primary">Simpan Data</button>
             </div>
-        </div>
     </form>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const flashMessage = document.getElementById('flash-message');
-            if (flashMessage) {
-                setTimeout(function() {
-                    flashMessage.style.display = 'none';
-                }, 3000);
-            }
-        });
-    </script>
 @endsection
 
 @section('script')
 <script>
-    var map = L.map('map').setView([-6.1751, 106.8650], 5); // Default ke Jakarta
+    var kabupatens = @json($kabupatens ?? []);
+
+    var map = L.map('map').setView([-2.5489, 118.0149], 5); // Indonesia center
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -82,44 +95,26 @@
 
     var marker = null;
 
-    function updateMarker(latlng) {
-        if (marker) {
-            map.removeLayer(marker);
-        }
-
-        var namaProvinsi = document.getElementById('nama_provinsi').value || 'Provinsi baru';
-        var popupContent = `<strong>${namaProvinsi}</strong><br>Latitude: ${latlng.lat}<br>Longitude: ${latlng.lng}`;
-
+    function updateMarker(latlng, name = null) {
+        if (marker) map.removeLayer(marker);
         marker = L.marker(latlng).addTo(map);
-        marker.bindPopup(popupContent).openPopup();
-
+        if (name) marker.bindPopup(name).openPopup();
         document.getElementById('latitude').value = latlng.lat;
         document.getElementById('longitude').value = latlng.lng;
     }
 
     map.on('click', function(e) {
-        updateMarker(e.latlng);
+        const nama = document.getElementById('nama_kabupaten')?.value || 'Kabupaten baru';
+        updateMarker(e.latlng, nama);
     });
 
-    var geocoder = L.Control.geocoder({
-        defaultMarkGeocode: false
-    })
-    .on('markgeocode', function(e) {
-        var bbox = e.geocode.bbox;
-        var latlng = e.geocode.center;
-        map.fitBounds([
-            [bbox.getSouthWest().lat, bbox.getSouthWest().lng],
-            [bbox.getNorthEast().lat, bbox.getNorthEast().lng]
-        ]);
-        updateMarker(latlng);
-    })
-    .addTo(map);
-
-    // Tambahkan marker untuk provinsi yang sudah ada
-    @foreach($provinsis as $prov)
-        L.marker([{{ $prov->latitude }}, {{ $prov->longitude }}])
-            .addTo(map)
-            .bindPopup("<strong>{{ $prov->nama_provinsi }}</strong><br>Latitude: {{ $prov->latitude }}<br>Longitude: {{ $prov->longitude }}");
-    @endforeach
+    // Existing kabupaten markers (optional)
+    kabupatens.forEach(function(kab) {
+        if (kab.latitude && kab.longitude) {
+            L.marker([kab.latitude, kab.longitude])
+                .addTo(map)
+                .bindPopup((kab.kode_kabupaten || '') + ' - ' + (kab.nama_kabupaten || ''));
+        }
+    });
 </script>
 @endsection

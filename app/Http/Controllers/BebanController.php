@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Beban;
-use App\Models\Komoditas;
 use App\Models\Kategori;
 use App\Models\Bebantanam;
 use Illuminate\Http\Request;
-use Iluminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\StoreBebanRequest;
-use App\Http\Requests\UpdateBebanRequest;
 
 class BebanController extends Controller
 {
@@ -19,14 +15,14 @@ class BebanController extends Controller
      */
     public function index()
     {
-        $bebans = Beban::getBebanDetailkategori();
-        $kategori = Kategori::orderBy('id_kategori')->get(); 
+        $bebans   = Beban::getBebanDetailkategori();
+        $kategori = Kategori::orderBy('id_kategori')->get();
 
-        // Menambahkan informasi apakah data master memiliki data transaksi atau tidak
         foreach ($bebans as $bb) {
             $bb->hasBebantanam = Bebantanam::where('id_beban', $bb->id_beban)->exists();
-            }
-        return view('bebans/index',compact('bebans','kategori'));
+        }
+
+        return view('bebans.index', compact('bebans', 'kategori'));
     }
 
     /**
@@ -34,72 +30,65 @@ class BebanController extends Controller
      */
     public function create()
     {
-        $bebans = Beban::all();
-         $kategori = Kategori::all();
-        return view('bebans.create',[
-            'kode_beban' => Beban::getKodebeban(),
-             'kategori' => Kategori::all()
-        ] );
+        return view('bebans.create', [
+            'kode_beban'   => Beban::getKodebeban(),
+            'kategori'     => Kategori::all(),
+            'kelompokList' => \App\Models\KelompokBiayaProduksi::all(),
+        ]);
     }
-   
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //digunakan untuk validasi kemudian kalau ok tidak ada masalah baru disimpan ke db
         $validated = $request->validate([
-            
-            'kode_beban' => 'required',
-            'nama_beban' => 'required',
-            
-            'kategori' => 'required',
-            'id_kategori' => 'required',
-           
-           
+            'nama_beban'                 => 'required',
+            'kategori'                   => 'required',
+            'id_kategori'                => 'required', // old Keterangan (Beban Variabel / Beban Fix)
+            'id_kelompok_biaya_produksi' => 'nullable', // new Kelompok Biaya Produksi (BBB, BTKL, BOP)
         ]);
 
-        // masukkan ke db
-        Beban::create($request->all());
-        
-        return redirect()->route('bebans.index')->with('success','Data Berhasil di Input');
-    }
+        $idKelompok = $validated['id_kelompok_biaya_produksi'] ?? null;
+        if (empty($idKelompok)) {
+            $idKelompok = Beban::guessIdKelompokBiaya($validated['nama_beban'], $validated['kategori']);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Beban $beban)
-    {
-        //
+        $beban = Beban::create([
+            'nama_beban'                 => $validated['nama_beban'],
+            'kategori'                   => $validated['kategori'],
+            'id_kategori'                => $validated['id_kategori'],
+            'id_kelompok_biaya_produksi' => $idKelompok,
+        ]);
+
+        $beban->refresh();
+
+        return redirect()
+            ->route('bebans.index')
+            ->with('success', 'Data Berhasil di Input');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit( $id_beban)
+    public function edit($id_beban)
     {
-        $bebans = Beban::all();
-        $kategori = Kategori::all();
-        $get = DB::table('bebans')->where('id_beban', $id_beban)->get();
-        foreach ($get as $p) {
-            $id_beban = $p->id_beban;
-            $kode_beban = $p->kode_beban;
-            $nama_beban = $p->nama_beban;
-            $kategori = $p->kategori;
-            $id_kategori = $p->id_kategori;
-           
-           
+        $get = DB::table('bebans')->where('id_beban', $id_beban)->first();
+
+        if (! $get) {
+            abort(404);
         }
+
         return view('bebans.edit', [
-            'id_beban' => $id_beban,
-            'kode_beban' => $kode_beban,
-            'nama_beban' => $nama_beban,
-            'kategori' => $kategori,
-            'id_kategori' => $id_kategori,
-            'bebans' => Beban::all(),
-            'kategori' => Kategori::all()
-            
+            'id_beban'                   => $get->id_beban,
+            'kode_beban'                 => $get->kode_beban,
+            'nama_beban'                 => $get->nama_beban,
+            'kategori'                   => $get->kategori,
+            'id_kategori'                => $get->id_kategori,
+            'id_kelompok_biaya_produksi' => $get->id_kelompok_biaya_produksi,
+            'bebans'                     => Beban::all(),
+            'kategoriList'               => Kategori::all(),
+            'kelompokList'               => \App\Models\KelompokBiayaProduksi::all(),
         ]);
     }
 
@@ -109,29 +98,27 @@ class BebanController extends Controller
     public function update(Request $request, Beban $bebans)
     {
         $validated = $request->validate([
-            
-            
-            'kode_beban' => 'required',
-            'nama_beban' => 'required',
-            'kategori' => 'required',
-            'id_kategori' => 'required',
-           
-            
+            'nama_beban'                 => 'required',
+            'kategori'                   => 'required',
+            'id_kategori'                => 'required', // old Keterangan (Beban Variabel / Beban Fix)
+            'id_kelompok_biaya_produksi' => 'nullable', // new Kelompok Biaya Produksi (BBB, BTKL, BOP)
         ]);
 
-        $update = Beban::where('id_beban', $request->id_beban)
-            ->update([
-                
-                
-                'kode_beban' => $request->kode_beban,
-                'nama_beban' => $request->nama_beban,
-                'kategori' => $request->kategori,
-                'id_kategori' => $request->id_kategori,
-                
-              
-            ]);
+        $idKelompok = $validated['id_kelompok_biaya_produksi'] ?? null;
+        if (empty($idKelompok)) {
+            $idKelompok = Beban::guessIdKelompokBiaya($validated['nama_beban'], $validated['kategori']);
+        }
 
-        return redirect()->route('bebans.index')->with('success', 'Data Berhasil di Update');
+        Beban::where('id_beban', $request->id_beban)->update([
+            'nama_beban'                 => $validated['nama_beban'],
+            'kategori'                   => $validated['kategori'],
+            'id_kategori'                => $validated['id_kategori'],
+            'id_kelompok_biaya_produksi' => $idKelompok,
+        ]);
+
+        return redirect()
+            ->route('bebans.index')
+            ->with('success', 'Data Berhasil di Update');
     }
 
     /**
@@ -139,8 +126,20 @@ class BebanController extends Controller
      */
     public function destroy(string $id_beban)
     {
-        $bebans = Beban::findOrFail($id_beban);
-        $bebans->delete();
-        return redirect()->route('bebans.index')->with('success', 'Data Berhasil dihapus');
+        try {
+            $bebans = Beban::findOrFail($id_beban);
+            $bebans->delete();
+
+            return redirect()
+                ->route('bebans.index')
+                ->with('success', 'Data Berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == '23000' || strpos($e->getMessage(), '1451') !== false) {
+                return redirect()
+                    ->route('bebans.index')
+                    ->with('error', 'Data gagal dihapus karena sedang digunakan pada transaksi biaya tanam.');
+            }
+            throw $e;
+        }
     }
 }

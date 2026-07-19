@@ -9,43 +9,85 @@ use Illuminate\Support\Facades\DB;
 class Lahan extends Model
 {
     use HasFactory;
+
     protected $table = "lahans";
     protected $primaryKey = "id_lahan";
-    protected $fillable = [ 
-        'id_lahan','kode_lahan','id_anggota','luas','jml_petak'];
 
+    protected $fillable = [
+        'id_lahan',
+        'kode_lahan',
+        'id_anggota',
+        'luas',
+        'jml_petak',
+    ];
 
-        public static function getLahanDetailanggota()
-        {
-           // query kode unit pelaksana teknis
-        $sql = "SELECT a.*,b.nama_anggota as nama_anggota
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI ELOQUENT
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Petani pemilik lahan (tabel anggotatanis).
+     * Dipakai dengan $lahan->petani.
+     */
+    public function petani()
+    {
+        return $this->belongsTo(Anggotatani::class, 'id_anggota', 'id_anggota');
+    }
+
+    /**
+     * Alias kalau di kode lama dipanggil $lahan->anggotatani.
+     */
+    public function anggotatani()
+    {
+        return $this->petani();
+    }
+
+    /**
+     * Semua tanam yang dilakukan di lahan ini.
+     */
+    public function tanams()
+    {
+        return $this->hasMany(Tanam::class, 'id_lahan', 'id_lahan');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FUNGSI LAMA BERBASIS QUERY MANUAL – DIBIARKAN
+    |--------------------------------------------------------------------------
+    */
+
+    public static function getLahanDetailanggota()
+    {
+        // query lahan + nama anggota
+        $sql = "SELECT a.*, b.nama_anggota as nama_anggota
                 FROM lahans a
                 JOIN anggotatanis b
-                ON (a.id_anggota=b.id_anggota)";
+                  ON (a.id_anggota = b.id_anggota)";
+
         $lahans = DB::select($sql);
 
         return $lahans;
-        }
+    }
 
-        public static function getKodelahan()
+    public static function getKodelahan()
     {
-        // query kode lahan
+        // query kode lahan terakhir
         $sql = "SELECT IFNULL(MAX(kode_lahan), 'LH-000') as kode_lahan
                 FROM lahans";
         $lahans = DB::select($sql);
 
-        // cacah hasilnya
         foreach ($lahans as $lahan) {
             $lh = $lahan->kode_lahan;
         }
-        // Mengambil substring tiga digit akhir dari string AT-000
-        $noawal = substr($lh,-3);
-        $noakhir = $noawal+1; //menambahkan 1, hasilnya adalah integer cth 1
-        
-        //menyambung dengan string AT-001
-        $noakhir = 'LH-'.str_pad($noakhir,3,"0",STR_PAD_LEFT); 
+
+        // ambil 3 digit terakhir, increment, lalu format lagi
+        $noawal  = substr($lh, -3);
+        $noakhir = $noawal + 1;
+
+        $noakhir = 'LH-' . str_pad($noakhir, 3, "0", STR_PAD_LEFT);
 
         return $noakhir;
-
     }
 }

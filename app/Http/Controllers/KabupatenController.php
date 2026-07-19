@@ -38,12 +38,11 @@ class KabupatenController extends Controller
      */
     public function create()
     {
-        $kabupatens = Kabupaten::all();
-        $provinsis = Provinsi::all();
-        return view('kabupatens.create',[
+        return view('kabupatens.create', [
             'kode_kabupaten' => Kabupaten::getKodekabupaten(),
-            'provinsis' => Provinsi::all()
-        ] );
+            'provinsis'      => Provinsi::orderBy('nama_provinsi')->get(),
+            'kabupatens'     => Kabupaten::orderBy('nama_kabupaten')->get(),
+        ]);
     }
 
     /**

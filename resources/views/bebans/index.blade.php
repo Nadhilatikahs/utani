@@ -1,8 +1,8 @@
 <!-- /resources/views/products/index.blade.php -->
 @extends('layouts.app')
-  
+
 @section('title', 'List')
-  
+
 @section('contents')
     <div class="d-flex align-items-center justify-content-between">
         <h1 class="mb-0"> Beban</h1>
@@ -14,39 +14,38 @@
             {{ Session::get('success') }}
         </div>
     @endif
+    @if(Session::has('error'))
+        <div class="alert alert-danger" role="alert">
+            {{ Session::get('error') }}
+        </div>
+    @endif
     <table class="table table-hover">
         <thead class="table-primary">
             <tr>
                 <th>Kode Beban </th>
                 <th>Nama Beban</th>
-               
+
                 <th>Kategori</th>
                 <th>Keterangan</th>
-               
-               
-                
-               
+                <th>Kelompok Biaya</th>
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>+
-           
+        <tbody>
+
                 @forelse($bebans as $bb)
                     <tr>
                         <td class="align-middle">{{ $bb->kode_beban }}</td>
                         <td class="align-middle">{{ $bb->nama_beban }}</td>
-                      
-                        <td class="align-middle">{{ $bb->kategori }}</td>
-                        <td class="align-middle">{{ $bb->keterangan }}</td>
-                      
-                       
-                       
+
+                        <td class="align-middle">{{ $bb->kategori ?? '-' }}</td>
+                        <td class="align-middle">{{ $bb->keterangan ?? 'Belum diklasifikasikan' }}</td>
+                        <td class="align-middle">{{ $bb->kelompok_biaya ?? 'Belum diklasifikasikan' }}</td>
                         <td class="align-middle">
-                            
-                               
+
+
                                 <a href="{{ route('bebans.edit', $bb->id_beban)}}" type="button" class="btn btn-success btn-circle">
                                 <i class="fas fa-pencil-alt"></i></a>
-                                @if (!$bb->hasBebantanam)
                             <form action="{{ route('bebans.destroy', $bb->id_beban) }}" method="POST" class="d-inline" id="delete-form-{{ $bb->id_beban }}">
                                 @csrf
                                 @method('DELETE')
@@ -54,11 +53,10 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        @endif
                             </div>
                         </td>
                     </tr>
-                
+
                 @empty
                                   <div class="alert alert-danger">
                                       Data Beban belum Tersedia.
@@ -83,7 +81,7 @@
                 </div>
             </div>
         </div>
-    </div>   
+    </div>
     <script>
         let formToDelete = null;
 

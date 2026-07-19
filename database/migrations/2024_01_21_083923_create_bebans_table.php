@@ -15,9 +15,7 @@ return new class extends Migration
             $table->id('id_beban');
             $table->string('nama_beban');
             $table->string('kategori');
-            $table->string('keterangan')->unsigned();
-
-
+            $table->string('keterangan');
             $table->timestamps();
         });
     }

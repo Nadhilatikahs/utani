@@ -55,9 +55,10 @@
             <div id="map"></div>
         </div>
 
-        <div class="text-left">
-            <button type="submit" class="btn btn-primary">Simpan Data</button>
-        </div>
+        <div class="text-left d-flex gap-2">
+                <a href="{{ route('provinsis.index') }}" class="btn btn-secondary">Kembali</a>
+                <button type="submit" class="btn btn-primary">Simpan Data</button>
+            </div>
     </form>
 
     <script>

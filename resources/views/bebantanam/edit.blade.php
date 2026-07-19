@@ -1,98 +1,134 @@
-<!-- //resources/views/products/edit.blade.php -->
 @extends('layouts.app')
 
 @section('title', 'Edit Data')
 
 @section('contents')
-    <h1 class="mb-0">Edit Beban Tanam</h1>
-    <hr />
-    <form action="bebantanam.update, $bebantanam->id_bebantanam" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
+<h1 class="mb-0">Edit Beban Tanam</h1>
+<hr />
 
-        <fieldset disabled>
-            <div class="mb-3">
-                <label for="kodebebantanamlabel">Kode </label>
-                <input class="form-control form-control-solid" id="kode_bebantanam_tampil" name="kode_bebantanam_tampil" type="text" placeholder="Contoh: bebantanam-001" value="{{$kode_bebantanam}}" readonly>
-            </div>
-        </fieldset>
-        <input type="hidden" id="kode_bebantanam" name="kode_bebantanam" value="{{$kode_bebantanam}}">
+<form action="{{ route('bebantanam.update', $id_bebantanam) }}" method="POST">
+    @csrf
+    @method('PUT')
 
-        <div class="row mb-3">
-            <div class="col">
-                <input type="hidden" name="id_bebantanam" class="form-control" placeholder="ID" value="{{$id_tanam}}">
-                <div class="row"> 
-                    <div class="col text-left"> kode tanam
-                        <select class="form-control select" style="width:100%;" name="id_tanam" id="id_tanam" value="{{$id_tanam}}">
-                            <option disabled value> Pilih Tanam</option>
-                            @foreach($tanams as $tm)
-                                <option value="{{$tm->id_tanam}}">{{$tm->kode_tanam}}</option>
-                            @endforeach
-                        </select>
-                    </div> 
-                </div> 
-                <div class="form-group"> nama beban
-                    <select class="form-control select" style="width:100%;" name="id_beban" id="id_beban" >
-                        <option disabled value> Pilih Beban</option>
-                        @foreach($bebans as $bb)
-                            <option value="{{$bb->id_beban}}">{{$bb->nama_beban}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            
-            <div class="row mb-3">
-                <div class="col">
-                    <label for="satuan"></label>
-                    <select name="satuan" id="satuan" class="form-control" value="{{$satuan}}">
-                        <option value="">Pilih Satuan</option>
-                        <option value="kg">Kg</option>
-                        <option value="g">g</option>
-                        <option value="l">L</option>
-                        <option value="ml">ml</option>
-                        <option value="HOK">HOK</option>
-                        <option value="Ha">Ha</option>
-                        <option value="bata">bata</option>
-                    </select>
-                </div>
-                <div class="col"> jumlah
-                    <input type="number" name="jumlah" id="jumlah" class="form-control" placeholder="jumlah" value="{{$jumlah}}" min="0" max="99" required>
-                </div>
-                <div class="col"> harga
-                    <input type="number" name="harga" id="harga" class="form-control" placeholder="harga" value="{{$harga}}" min="0" max="999999" required>
-                </div>
-            </div>
+    {{-- Kode Beban Tanam (read only) --}}
+    <fieldset disabled>
+        <div class="mb-3">
+            <label>Kode Beban Tanam</label>
+            <input
+                type="text"
+                class="form-control form-control-solid"
+                value="{{ $kode_bebantanam }}"
+                readonly
+            >
         </div>
-        
-        <div class="row"> 
-            <div class="col text-left">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
+    </fieldset>
+
+    {{-- Hidden fields --}}
+    <input type="hidden" name="kode_bebantanam" value="{{ $kode_bebantanam }}">
+    <input type="hidden" name="id_bebantanam" value="{{ $id_bebantanam }}">
+
+    {{-- Tanam & Beban --}}
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Kode Tanam</label>
+            <select name="id_tanam" class="form-control" required>
+                <option disabled>Pilih Tanam</option>
+                @foreach($tanams as $tm)
+                    <option value="{{ $tm->id_tanam }}"
+                        {{ $tm->id_tanam == $id_tanam ? 'selected' : '' }}>
+                        {{ $tm->kode_tanam }}
+                    </option>
+                @endforeach
+            </select>
         </div>
-    </form>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const jumlahInput = document.getElementById('jumlah');
-            const hargaInput = document.getElementById('harga');
+        <div class="col-md-6">
+            <label>Nama Beban</label>
+            <select name="id_beban" class="form-control" required>
+                <option disabled>Pilih Beban</option>
+                @foreach($bebans as $bb)
+                    <option value="{{ $bb->id_beban }}"
+                        {{ $bb->id_beban == $id_beban ? 'selected' : '' }}>
+                        {{ $bb->nama_beban }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
 
-            jumlahInput.addEventListener('input', function() {
-                let value = jumlahInput.value;
-                
-                // Batasi panjang input ke 2 digit
-                if (value.length > 2) {
-                    jumlahInput.value = value.slice(0, 2);
-                }
-            });
+    {{-- Satuan, Jumlah, Harga --}}
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label>Satuan</label>
+            <select name="satuan" class="form-control" required>
+                <option value="kg"   {{ $satuan == 'kg' ? 'selected' : '' }}>Kg</option>
+                <option value="g"    {{ $satuan == 'g' ? 'selected' : '' }}>Gram</option>
+                <option value="l"    {{ $satuan == 'l' ? 'selected' : '' }}>Liter</option>
+                <option value="ml"   {{ $satuan == 'ml' ? 'selected' : '' }}>Mililiter</option>
+                <option value="HOK"  {{ $satuan == 'HOK' ? 'selected' : '' }}>HOK</option>
+                <option value="jam"  {{ $satuan == 'jam' ? 'selected' : '' }}>Jam</option>
+                <option value="hari" {{ $satuan == 'hari' ? 'selected' : '' }}>Hari</option>
+                <option value="bulan"{{ $satuan == 'bulan' ? 'selected' : '' }}>Bulan</option>
+                <option value="tahun"{{ $satuan == 'tahun' ? 'selected' : '' }}>Tahun</option>
+                <option value="bata" {{ $satuan == 'bata' ? 'selected' : '' }}>Bata</option>
+            </select>
+        </div>
 
-            hargaInput.addEventListener('input', function() {
-                let value = hargaInput.value;
-                
-                // Batasi panjang input ke 6 digit
-                if (value.length > 6) {
-                    hargaInput.value = value.slice(0, 6);
-                }
-            });
-        });
-    </script>
+        <div class="col-md-4">
+            <label>Jumlah</label>
+            <input
+                type="number"
+                name="jumlah"
+                id="jumlah"
+                class="form-control"
+                value="{{ $jumlah }}"
+                min="0"
+                required
+            >
+        </div>
+
+        <div class="col-md-4">
+            <label>Harga</label>
+            <input
+                type="number"
+                name="harga"
+                id="harga"
+                class="form-control"
+                value="{{ $harga }}"
+                min="0"
+                required
+            >
+        </div>
+    </div>
+
+    {{-- Submit --}}
+    <div class="row">
+        <div class="col">
+            <a href="{{ route('bebantanam.index') }}" class="btn btn-secondary mr-2">Kembali</a>
+                <button type="submit" class="btn btn-primary">
+                Submit
+            </button>
+        </div>
+    </div>
+</form>
+
+{{-- Optional input limiter --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const jumlah = document.getElementById('jumlah');
+    const harga  = document.getElementById('harga');
+
+    jumlah.addEventListener('input', () => {
+        if (jumlah.value.length > 4) {
+            jumlah.value = jumlah.value.slice(0, 4);
+        }
+    });
+
+    harga.addEventListener('input', () => {
+        if (harga.value.length > 7) {
+            harga.value = harga.value.slice(0, 7);
+        }
+    });
+});
+</script>
 @endsection

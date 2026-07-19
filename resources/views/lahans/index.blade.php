@@ -39,7 +39,6 @@
                                
                             <a href="{{ route('lahans.edit', $lh->id_lahan)}}" class="btn btn-success btn-circle">
                             <i class="fas fa-pencil-alt"></i></a>
-                            @if (!$lh->hasTanams)
                             <form action="{{ route('lahans.destroy', $lh->id_lahan) }}" method="POST" class="d-inline" id="delete-form-{{ $lh->id_lahan }}">
                                 @csrf
                                 @method('DELETE')
@@ -47,7 +46,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        @endif
+                        
                             </div>
                         </td>
                     </tr>

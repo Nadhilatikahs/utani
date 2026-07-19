@@ -39,6 +39,13 @@
                                
                                 <a href="{{ route('komoditas.edit', $kd->id_komoditas)}}" type="button" class="btn btn-success btn-circle">
                                 <i class="fas fa-pencil-alt"></i></a>
+                            <form action="{{ route('komoditas.destroy', $kd->id_komoditas) }}" method="POST" class="d-inline" id="delete-form-{{ $kd->id_komoditas }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" onclick="if(confirm('Apakah Anda yakin?')) document.getElementById('delete-form-{{ $kd->id_komoditas }}').submit();" class="btn btn-danger btn-circle">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                                
                             </div>
                         </td>

@@ -34,15 +34,14 @@
                         <a href="{{ route('provinsis.edit', $rs->id_provinsi) }}" class="btn btn-success btn-circle">
                         <i class="fas fa-pencil-alt"></i>
                         </a>
-                        @if (!$rs->hasKabupaten)
-                            <form action="{{ route('provinsis.destroy', $rs->id_provinsi) }}" method="POST" class="d-inline" id="delete-form-{{ $rs->id_provinsi }}">
+                        <form action="{{ route('provinsis.destroy', $rs->id_provinsi) }}" method="POST" class="d-inline" id="delete-form-{{ $rs->id_provinsi }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" onclick="deleteConfirm({{ $rs->id_provinsi }}, '{{ $rs->kode_provinsi }}')" class="btn btn-danger btn-circle">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        @endif
+                        
                     </td>
                 </tr>
             @empty

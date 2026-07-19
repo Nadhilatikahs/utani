@@ -34,6 +34,7 @@
  
         <div class="row">
             <div class="d-grid">
+                <a href="{{ route('bebanfix.index') }}" class="btn btn-secondary mr-2">Kembali</a>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>

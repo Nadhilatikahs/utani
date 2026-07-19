@@ -28,7 +28,7 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>+
+        <tbody>
            
                 @forelse($kelompoktanis as $d)
                     <tr>
@@ -45,16 +45,13 @@
                         
                                 <a href="{{ route('keltanis.edit', $d->id_keltani)}}" type="button" class="btn btn-success btn-circle">
                                 <i class="fas fa-pencil-alt"></i></a>
-                                @if (!$d->hasAnggotatanis)
-                            <form action="{{ route('keltanis.destroy', $d->id_keltani) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_keltani }}">
+                                <form action="{{ route('keltanis.destroy', $d->id_keltani) }}" method="POST" class="d-inline" id="delete-form-{{ $d->id_keltani }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" onclick="deleteConfirm({{ $d->id_keltani }}, '{{ $d->kode_keltani }}')" class="btn btn-danger btn-circle">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                            @endif
-                            </div>
                         </td>
                     </tr>
                 
@@ -88,7 +85,7 @@
 
         function deleteConfirm(id, kode) {
             formToDelete = document.getElementById('delete-form-' + id);
-            const pesan = `Provinsi dengan kode <b>${kode}</b> akan dihapus`;
+            const pesan = `Kelompok Tani dengan kode <b>${kode}</b> akan dihapus`;
             document.getElementById("xid").innerHTML = pesan;
 
             const myModal = new bootstrap.Modal(document.getElementById('deleteModal'), { keyboard: false });
